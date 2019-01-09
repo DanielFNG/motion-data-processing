@@ -12,7 +12,6 @@ grfs = importdata(input_file);
 
 % Create arrays for storage.
 row_length = size(grfs.data, 1);
-time = zeros(row_length, 1);
 forces = zeros(row_length, 6);
 moments = zeros(row_length, 6);
 
