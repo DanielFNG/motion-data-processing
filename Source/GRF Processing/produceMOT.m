@@ -27,7 +27,7 @@ data = constructGRFDataArray(forces, cop, torques);
 % Write .mot file suitable for OpenSim usage. 
 if nargin < 2
     [path, name, ~] = fileparts(input_file);
-    output_file = [path name '.mot'];
+    output_file = [path filesep name '.mot'];
 end
 writeMOTFile(time, data, output_file)
 

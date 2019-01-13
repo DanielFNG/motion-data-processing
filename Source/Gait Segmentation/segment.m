@@ -1,12 +1,10 @@
 function segment(...
     side, mode, cutoff, grfs, kinematics, save_dir)
 % Segment marker and grf files. 
-%   GRFS is a filename or cell array of filenames, corresponding to grf files
-%   which are to be segmented.
-%   KINEMATICS is a filename or cell array of filenames, corresponding to
-%   marker files which are to be segmented.
-%       Note: if both grfs and kinematics are provided, they are assumed to be
-%       1:1 and so length(grfs) == length(kinematics) is required.
+%   GRFS is a filename corresponding to the grf file to be segmented.
+%   KINEMATICS is a filename corresponding to the marker file to be segmented.
+%       Note: segment can be used with only one type of file, though this limits
+%             the mode of operation (see MODE below).
 %   SIDE is a string taking the value 'right' or 'left', and decides which 
 %   foot/leg is used for gait cycle segmentation.
 %   MODE is a string taking one of the following values: 'stance', 'toe-peak'.
@@ -20,57 +18,42 @@ function segment(...
 %   SAVE_DIR is the directory where output files are saved. 
 %
 %   Example usage:
-%       segment('stance', [0.0122, 40], {'grf1.mot', 'grf2.mot'}, [])
-%       segment('stance', [0, 40], 'grf.mot', 'kin.mot')
-%       segment('toe-peak', [0.05], {'grf1.mot', 'grf2.mot'}, ...
-%           {'kin1.mot', 'kin2.mot'})
+%       segment('stance', 'left', [35], 'grf.mot', [], pwd)
+%       segment('stance', 'right', [40], 'grf.mot', 'kin.mot', pwd)
+%       segment('toe-peak', 'right', [], [], 'kin.mot', pwd)
 
 %% Checks
-
-n_grfs = length(grfs);
-n_kinematics = length(kinematics);
-
-if n_grfs ~= n_kinematics && min(n_grfs, n_kinematics) ~= 0
-    error('If both provided, grfs and kinematics must have same length.');
-end
-
-if n_kinematics == 0 && strcmp(mode, 'toe-peak')
+if isempty(kinematics) && strcmp(mode, 'toe-peak')
     error('Cannot segment only GRF files using hip-peak segmentation.');
-end
-
-if n_grfs == 0 && ~strcmp(mode, 'toe-peak')
-    error('Cannot segment only marker files using grf-based segmentation.');
+elseif isempty(grfs) && strcmp(mode, 'stance')
+    error('Cannot segment only marker files using stance segmentation.');
 end
 
 %% Parameter switching
 switch mode
     case 'stance'
-        primary = n_grfs;
         func = @segmentGRF;
         args = {side, cutoff};
-        files = grfs;
+        file = grfs;
     case 'toe-peak'
-        primary = n_kinematics;
         func = @segmentMarkers;
         args = {side};
-        files = kinematics;
+        file = kinematics;
 end
 
-%% Main loop to identify the correct indices
-segmentation_indices = cell(1, primary);
-for i=1:primary
-    segmentation_indices{i} = func(args{:}, files(i));
-end
+%% Identify the correct indices
+segmentation_indices = func(args{:}, file);
 
 %% File output 
-files = [grfs kinematics];
+files = {grfs kinematics};
 for i = 1:length(files)
-    whole_file = Data(files(i));
-    cycles = segmentation_indices{i};
-    [~, name, ext] = fileparts(files(i));
-    for j = 1:length(cycles)
-        segment = whole_file.slice(cycles{j});
-        segment.writeToFile(...
-            [save_dir filesep name '_' side '_cycle' num2str(j) ext]);
+    if ~isempty(files{i})
+        whole_file = Data(files{i});
+        [~, name, ext] = fileparts(files{i});
+        for j = 1:length(segmentation_indices)
+            segment = whole_file.slice(segmentation_indices{j});
+            segment.writeToFile(...
+                [save_dir filesep name '_' side '_cycle' num2str(j) ext]);
+        end
     end
 end
