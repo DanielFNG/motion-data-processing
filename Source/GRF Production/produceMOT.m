@@ -1,4 +1,4 @@
-function output_file = produceMOT(input_file, output_file)
+function output_file = produceMOT(input_file, save_dir)
 
 % Get the time array, forces and moments from the .txt GRF file.
 [time, forces, moments] = readGRFTextData(input_file);
@@ -25,10 +25,8 @@ torques = calcTorques(forces, moments, cop);
 data = constructGRFDataArray(forces, cop, torques);
 
 % Write .mot file suitable for OpenSim usage. 
-if nargin < 2
-    [path, name, ~] = fileparts(input_file);
-    output_file = [path filesep name '.mot'];
-end
+[~, name, ~] = fileparts(input_file);
+output_file = [save_dir filesep name '.mot'];
 writeMOTFile(time, data, output_file)
 
 end

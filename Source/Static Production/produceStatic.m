@@ -1,4 +1,4 @@
-function produceStatic(static_trc, output)
+function static = produceStatic(static_trc)
 
 markers = Data(static_trc);
 
@@ -12,6 +12,5 @@ labels = {'LAJC', 'RAJC', 'LHJC', 'RHJC', 'LKJC', 'RKJC'};
 values = [la_jc, ra_jc, lh_jc, rh_jc, lk_jc, rk_jc];
 
 static = markers.extend(labels, values);
-static.writeToFile(output);
 end
 
