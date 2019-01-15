@@ -1,4 +1,9 @@
-function processMarkerData(data_folder, rotations, save_dir)
+function processMarkerData(data_folder, rotations, save_dir, info)
+
+% Check if detailed error reporting is required.
+if nargin < 4
+    info = false;
+end
 
 % Get the files.
 marker_files = dir([data_folder filesep '*.trc']);
@@ -12,8 +17,10 @@ for i=1:n_files
         markers.rotate(rotations{:});
         markers.writeToFile(output_markers);
     catch err
-        fprintf('\nFailed to process on entry %i. Error message below.\n', i);
-        warning(err.message);
+        fprintf('\nFailed to process on entry %i.\n', i);
+        if info
+            disp(getReport(err, 'extended', 'hyperlinks', 'on'))
+        end
     end
 end
 
