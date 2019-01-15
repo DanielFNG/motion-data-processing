@@ -4,19 +4,17 @@ source = Data(source_file);
 sink = Data(sink_file);
 
 sink.Timesteps = sink.Timesteps + delay;
-initial_sink = sink.Timesteps(1);
-final_sink = sink.Timesteps(end);
-initial_source = source.Timesteps(1);
-final_source = source.Timesteps(end);
 
-acceptable_source_frames = source.Frames(...
-    source.Timesteps > initial_sink & source.Timesteps < final_sink);
-acceptable_sink_frames = sink.Frames(...
-    sink.Timesteps > initial_source & sink.Timesteps < final_source);
-common_frames = intersect(acceptable_source_frames, acceptable_sink_frames);
+earliest_start = max(sink.Timesteps(1), source.Timesteps(1));
+latest_finish = min(sink.Timesteps(end), source.Timesteps(end));
 
-new_source = source.slice(common_frames);
-new_sink = sink.slice(common_frames);
+source_frames = source.Frames(...
+    source.Timesteps >= earliest_start & source.Timesteps <= latest_finish);
+sink_frames = sink.Frames(...
+    sink.Timesteps >= earliest_start & sink.Timesteps <= latest_finish);
+
+new_source = source.slice(source_frames);
+new_sink = sink.slice(sink_frames);
 
 end
 
