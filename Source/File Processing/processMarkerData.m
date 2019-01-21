@@ -11,13 +11,13 @@ n_files = length(marker_files);
 
 for i=1:n_files
     try
-        input_markers = [input_folder filesep marker_files(i).name];
+        input_markers = [data_folder filesep marker_files(i).name];
         output_markers = [save_dir filesep marker_files(i).name];
         markers = Data(input_markers);
         markers.rotate(rotations{:});
         markers.writeToFile(output_markers);
     catch err
-        fprintf('\nFailed to process on entry %i.\n', i);
+        fprintf('\nFailed to process on file %s.\n', input_markers);
         if info
             disp(getReport(err, 'extended', 'hyperlinks', 'on'))
         end
