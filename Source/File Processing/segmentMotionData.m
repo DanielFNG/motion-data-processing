@@ -10,7 +10,7 @@ end
 
 for i=1:n_files
     segment('left', mode, cutoff, grf_files(i), marker_files(i), save_dir);
-    segment('right', mode, 40, grf_files(i), marker_files(i), save_dir);
+    segment('right', mode, cutoff, grf_files(i), marker_files(i), save_dir);
 end
 
 end
