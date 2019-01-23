@@ -16,7 +16,8 @@ function cycles = segmentGRF(side, cutoff, grf_file)
     start = 1;
     for j=1:length(indices) - 1
         if indices(j + 1) > indices(j) + minimum_increase
-            cycles{k} = indices(start):indices(j + 1) - 1; %#ok<AGROW>
+            cycles{k} = motion_data.Timesteps(...
+                indices(start):indices(j + 1) - 1); %#ok<AGROW>
             k = k + 1;
             start = j + 1;
         end

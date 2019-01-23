@@ -42,7 +42,7 @@ switch mode
 end
 
 %% Identify the correct indices
-segmentation_indices = func(args{:}, file);
+segmentation_times = func(args{:}, file);
 
 %% File output 
 files = {grfs kinematics};
@@ -50,8 +50,11 @@ for i = 1:length(files)
     if ~isempty(files{i})
         whole_file = Data(files{i});
         [~, name, ext] = fileparts(files{i});
-        for j = 1:length(segmentation_indices)
-            segment = whole_file.slice(segmentation_indices{j});
+        for j = 1:length(segmentation_times)
+            suitable_frames = ...
+                (whole_file.Timesteps >= segmentation_times{j}(1) & ...
+                whole_file.Timesteps <= segmentation_times{j}(end));
+            segment = whole_file.slice(suitable_frames);
             segment.writeToFile(...
                 [save_dir filesep name '_' side '_cycle' num2str(j) ext]);
         end

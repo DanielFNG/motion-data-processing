@@ -13,7 +13,7 @@ function cycles = segmentMarkers(side, markers_file)
     cycles = cell(1, n_cycles);
     
     for i=1:n_cycles
-        cycles{i} = indices(i):indices(i+1) - 1;
+        cycles{i} = motion_data.Timesteps(indices(i):indices(i+1) - 1);
     end
 
 end
