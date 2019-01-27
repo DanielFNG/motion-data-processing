@@ -1,9 +1,9 @@
 function segment(...
     side, mode, cutoff, grfs, kinematics, save_dir)
-% Segment marker and grf files. 
-%   GRFS is a filename corresponding to the grf file to be segmented.
-%   KINEMATICS is a filename corresponding to the marker file to be segmented.
-%       Note: segment can be used with only one type of file, though this limits
+% Segment marker and grf data. 
+%   GRFS is a grf Data object to be segmented.
+%   KINEMATICS is a kinematics Data object to be segmented.
+%       Note: segment can be used with only one type of data, though this limits
 %             the mode of operation (see MODE below).
 %   SIDE is a string taking the value 'right' or 'left', and decides which 
 %   foot/leg is used for gait cycle segmentation.
@@ -34,27 +34,27 @@ switch mode
     case 'stance'
         func = @segmentGRF;
         args = {side, cutoff};
-        file = grfs;
+        motion_data = grfs;
     case 'toe-peak'
         func = @segmentMarkers;
         args = {side};
-        file = kinematics;
+        motion_data = kinematics;
 end
 
 %% Identify the correct indices
-segmentation_times = func(args{:}, file);
+segmentation_times = func(args{:}, motion_data);
 
 %% File output 
-files = {grfs kinematics};
-for i = 1:length(files)
-    if ~isempty(files{i})
-        whole_file = Data(files{i});
-        [~, name, ext] = fileparts(files{i});
+combined_motion_data = {grfs kinematics};
+for i = 1:length(combined_motion_data)
+    if ~isempty(combined_motion_data{i})
+        motion_data = combined_motion_data{i};
+        [~, name, ext] = fileparts(motion_data.File);
         for j = 1:length(segmentation_times)
             suitable_frames = ...
-                (whole_file.Timesteps >= segmentation_times{j}(1) & ...
-                whole_file.Timesteps <= segmentation_times{j}(end));
-            segment = whole_file.slice(suitable_frames);
+                (motion_data.Timesteps >= segmentation_times{j}(1) & ...
+                motion_data.Timesteps <= segmentation_times{j}(end));
+            segment = motion_data.slice(suitable_frames);
             segment.writeToFile(...
                 [save_dir filesep name '_' side '_cycle' num2str(j) ext]);
         end

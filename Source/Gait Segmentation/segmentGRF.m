@@ -1,8 +1,6 @@
-function cycles = segmentGRF(side, cutoff, grf_file)
+function cycles = segmentGRF(side, cutoff, motion_data)
 
     minimum_increase = 5;
-
-    motion_data = Data(grf_file);
 
     if strcmp(side, 'left')
         str = 'ground_force2_vy';

@@ -1,8 +1,5 @@
 function [new_source, new_sink] = synchronise(source_file, sink_file, delay)
 
-source = Data(source_file);
-sink = Data(sink_file);
-
 sink.Timesteps = sink.Timesteps + delay;
 
 earliest_start = max(sink.Timesteps(1), source.Timesteps(1));

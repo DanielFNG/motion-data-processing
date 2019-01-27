@@ -1,6 +1,4 @@
-function cycles = segmentMarkers(side, markers_file)
-
-    motion_data = Data(markers_file);
+function cycles = segmentMarkers(side, motion_data)
 
     if strcmp(side, 'left')
         str = 'L_MTP1';

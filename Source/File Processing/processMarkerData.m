@@ -11,10 +11,15 @@ n_files = length(marker_files);
 
 for i=1:n_files
     try
+        % Load marker data.
         input_markers = [data_folder filesep marker_files(i).name];
-        output_markers = [save_dir filesep marker_files(i).name];
         markers = Data(input_markers);
+        
+        % Rotate.
         markers.rotate(rotations{:});
+        
+        % Write updated marker file.
+        output_markers = [save_dir filesep marker_files(i).name];
         markers.writeToFile(output_markers);
     catch err
         fprintf('\nFailed to process on file %s.\n', input_markers);

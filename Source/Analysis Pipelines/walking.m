@@ -16,6 +16,5 @@ save_segmented = '';  % Segmented motion data save directory.
 
 %% Processing.
 processStaticData(static_folder, marker_rotations, save_static);
-processMotionData(...
-    data_folder, marker_rotations, grf_rotations, time_delay, save_motion);
-segmentMotionData(save_motion, cutoff, segmentation_mode, save_segment);
+processGaitData(data_folder, marker_rotations, grf_rotations, time_delay, ...
+    segmentation_mode, cutoff, save_motion);
