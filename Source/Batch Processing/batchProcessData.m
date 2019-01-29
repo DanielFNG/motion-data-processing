@@ -5,6 +5,7 @@ function batchProcessData(analysis, markers, grfs, save_dir, info, ...
         case 'Static'
             func = @processStaticData;
             n_dirs = 1;
+            ext = '.trc';
             args = {marker_rotations, save_dir};
         case 'Motion' 
             func = @processMotionData;
@@ -14,10 +15,12 @@ function batchProcessData(analysis, markers, grfs, save_dir, info, ...
         case 'Marker'
             func = @processMarkerData;
             n_dirs = 1;
+            ext = '.trc';
             args = {marker_rotations, save_dir};
         case 'GRF'
             func = @processGRFData;
             n_dirs = 1;
+            ext = '.mot';
             args = {grf_rotations, save_dir};
         case 'Gait'
             func = @processGaitData;
@@ -28,10 +31,10 @@ function batchProcessData(analysis, markers, grfs, save_dir, info, ...
     
     switch n_dirs
         case 1
-            [n_files, files] = getFilePaths(dirs{1});
+            [n_files, files] = getFilePaths(dirs{1}, ext);
         case 2
-            [n_markers, markers] = getFilePaths(dirs{1});
-            [n_grfs, grfs] = getFilePaths(dirs{2});
+            [n_markers, markers] = getFilePaths(dirs{1}, '.trc');
+            [n_grfs, grfs] = getFilePaths(dirs{2}, '.mot');
             if ~(n_markers == n_grfs)
                 error('Unequal number of markers and grf files.');
             end
@@ -41,7 +44,7 @@ function batchProcessData(analysis, markers, grfs, save_dir, info, ...
     
     for i=1:n_files
         try
-            func(files{1, :}, args{:});
+            func(files{i, :}, args{:});
         catch err
             fprintf('Failed to process on entry %i.n', i);
             if info 
