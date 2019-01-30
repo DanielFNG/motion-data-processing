@@ -1,5 +1,5 @@
 function processGaitData(marker_file, grf_file, marker_rotations, ...
-    grf_rotations, time_delay, mode, cutoff, save_dir, info)
+    grf_rotations, time_delay, mode, cutoff, feet, save_dir)
 
     % Process + load data.
     marker_data = Data(input_markers);
@@ -13,9 +13,7 @@ function processGaitData(marker_file, grf_file, marker_rotations, ...
     grfs.rotate(grf_rotations{:});
         
     % Segment & save files. 
-    [~, marker_name, ~] = fileparts(marker_file);
-    inner_save = [save_dir filesep marker_name];
-    mkdir(inner_save);
-    segment('left', mode, cutoff, grfs, markers, inner_save);
-    segment('right', mode, cutoff, grfs, markers, inner_save);        
+    for foot = feet
+        segment(foot{1}, mode, cutoff, grfs, markers, save_dir);
+    end        
 end

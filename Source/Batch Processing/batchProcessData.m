@@ -1,5 +1,5 @@
 function batchProcessData(analysis, markers, grfs, save_dir, info, ...
-    marker_rotations, grf_rotations, time_delay, mode, cutoff)
+    marker_rotations, grf_rotations, time_delay, mode, cutoff, feet)
     
     switch analysis
         case 'Static'
@@ -26,7 +26,7 @@ function batchProcessData(analysis, markers, grfs, save_dir, info, ...
             func = @processGaitData;
             n_dirs = 2;
             args = {marker_rotations, grf_rotations, time_delay, mode, ...
-                cutoff, save_dir};
+                cutoff, feet, save_dir};
     end
     
     switch n_dirs
