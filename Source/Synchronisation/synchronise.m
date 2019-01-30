@@ -1,4 +1,4 @@
-function [new_source, new_sink] = synchronise(source_file, sink_file, delay)
+function [new_source, new_sink] = synchronise(source, sink, delay)
 
 sink.Timesteps = sink.Timesteps + delay;
 

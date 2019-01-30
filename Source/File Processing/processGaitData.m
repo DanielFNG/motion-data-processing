@@ -2,8 +2,8 @@ function processGaitData(marker_file, grf_file, marker_rotations, ...
     grf_rotations, time_delay, mode, cutoff, feet, save_dir)
 
     % Process + load data.
-    marker_data = Data(input_markers);
-    grf_data = createGRFData(input_grf, save_dir);
+    marker_data = Data(marker_file);
+    grf_data = produceMOT(grf_file, save_dir);
         
     % Synchronise. 
     [markers, grfs] = synchronise(marker_data, grf_data, time_delay);
