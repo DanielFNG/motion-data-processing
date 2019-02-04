@@ -1,4 +1,4 @@
-function batchProcessData(settings)
+function status = batchProcessData(settings)
     
     switch settings.analysis
         case 'Static'
@@ -45,10 +45,12 @@ function batchProcessData(settings)
         mkdir(settings.save_dir);
     end
     
+    status = 0;
     for i=1:n_files
         try
             func(files{:, i}, args{:});
         catch err
+            status = 1;
             fprintf('Failed to process on entry %i.\n', i);
             fprintf(err.message);
             fprintf('\n');
