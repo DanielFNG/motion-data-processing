@@ -17,6 +17,6 @@ labels = {'time', ...
 
 values = [time, data];
 
-grf_data = Data(output_file, values, header, labels);
+grf_data = MOTData(values, header, labels);
 
 end

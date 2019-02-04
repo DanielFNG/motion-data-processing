@@ -1,5 +1,5 @@
 function segment(...
-    side, mode, cutoff, grfs, kinematics, save_dir)
+    side, mode, cutoff, grfs, kinematics, name, save_dir)
 % Segment marker and grf data. 
 %   GRFS is a grf Data object to be segmented.
 %   KINEMATICS is a kinematics Data object to be segmented.
@@ -15,12 +15,13 @@ function segment(...
 %       kinematics files, and are applied to the corresponding grf files.
 %   CUTOFF < FY denotes the stance phase:
 %           Mode = 'toe-peak' => cutoff = []
+%   NAME is a string which is part of the resultant filenames.
 %   SAVE_DIR is the directory where output files are saved. 
 %
 %   Example usage:
-%       segment('stance', 'left', [35], 'grf.mot', [], pwd)
-%       segment('stance', 'right', [40], 'grf.mot', 'kin.mot', pwd)
-%       segment('toe-peak', 'right', [], [], 'kin.mot', pwd)
+%       segment('stance', 'left', [35], 'grf.mot', [], 'fastwalk', pwd)
+%       segment('stance', 'right', [40], 'grf.mot', 'kin.mot', 'exowalk', pwd)
+%       segment('toe-peak', 'right', [], [], 'kin.mot', 'limp', pwd)
 
 %% Checks
 if isempty(kinematics) && strcmp(mode, 'toe-peak')
@@ -49,14 +50,13 @@ combined_motion_data = {grfs kinematics};
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
         motion_data = combined_motion_data{i};
-        [~, name, ext] = fileparts(motion_data.File);
         for j = 1:length(segmentation_times)
             suitable_frames = ...
-                (motion_data.Timesteps >= segmentation_times{j}(1) & ...
-                motion_data.Timesteps <= segmentation_times{j}(end));
+                (motion_data.getColumn('time') >= segmentation_times{j}(1) & ...
+                motion_data.getColumn('time') <= segmentation_times{j}(end));
             segment = motion_data.slice(suitable_frames);
             segment.writeToFile(...
-                [save_dir filesep name '_' side '_cycle' num2str(j) ext]);
+                [save_dir filesep name '_' side '_cycle' num2str(j)]);
         end
     end
 end

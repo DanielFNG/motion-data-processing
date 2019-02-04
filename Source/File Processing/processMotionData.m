@@ -1,9 +1,9 @@
 function processMotionData(marker_file, grf_file, marker_rotations, ...
-    grf_rotations, time_delay, save_dir)
+    grf_rotations, time_delay, save_dir, feet, mode, cutoff)
 
     % Produce data objects.
-    marker_data = Data(input_markers);;
-    grf_data = produceMOT(input_grf, save_dir);
+    marker_data = Data(marker_file);
+    grf_data = produceMOT(grf_file, save_dir);
     
     % Syncronise. 
     [markers, grfs] = synchronise(marker_data, grf_data, time_delay);
@@ -12,9 +12,18 @@ function processMotionData(marker_file, grf_file, marker_rotations, ...
     markers.rotate(marker_rotations{:});
     grfs.rotate(grf_rotations{:});
     
-    % Produce files.
-    [~, marker_name, marker_ext] = fileparts(marker_file);
-    markers.writeToFile([save_dir filesep marker_name marker_ext]);
-    grfs.writeToFile();
+    [~, marker_name, ~] = fileparts(marker_file);
+    [~, grfs_name, ~] = fileparts(grf_file);
+    if nargin == 9
+        % Segment & save files.
+        for foot = feet
+            segment(...
+                foot{1}, mode, cutoff, grfs, markers, marker_name, save_dir);
+        end
+    else
+        % Produce files.
+        markers.writeToFile([save_dir filesep marker_name]);
+        grfs.writeToFile([save_dir filesep grfs_name]);
+    end
 end
 
