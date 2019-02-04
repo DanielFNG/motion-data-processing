@@ -1,16 +1,20 @@
-function processGRFData(data_folder, rotations, save_dir)
+function processGRFData(grfs_file, rotations, save_dir, feet, mode, cutoff)
 
-% Get the files.
-grf_files = dir([data_folder filesep '*.mot']);
-n_files = length(grf_files);
-
-for i=1:n_files
-    input_grf = [data_folder filesep grf_files(i).name];
-    output_grf = produceMOT(input_grf, save_dir);
-    grfs = Data(output_grf);
+    % Load grfs data.
+    grfs = produceMOT(grfs_file, save_dir);
+    
+    % Rotate.
     grfs.rotate(rotations{:});
-    grfs.writeToFile(output_markers);
-end
+    
+    [~, name, ~] = fileparts(grfs_file);
+    if nargin == 6
+        for i=1:length(feet)
+            segment(feet{i}, mode, cutoff, grfs, [], name, save_dir);
+        end
+    else
+        % Write .mot file.
+        grfs.writeToFile([save_dir filesep name]);
+    end
 
 end
 
