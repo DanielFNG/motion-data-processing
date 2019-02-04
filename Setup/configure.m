@@ -3,6 +3,7 @@ function configure()
 
 % Modify the Matlab path to include the source folder.
 addpath(genpath(['..' filesep 'Source']));
+addpath(genpath(['..' filesep 'GUI']));
     
 % Save resulting path.
 savepath;
