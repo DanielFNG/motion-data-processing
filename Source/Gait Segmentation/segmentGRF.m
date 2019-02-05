@@ -15,9 +15,11 @@ function cycles = segmentGRF(side, cutoff, motion_data)
     start = 1;
     for j=1:length(indices) - 1
         if indices(j + 1) > indices(j) + minimum_increase
-            cycles{k} = ...
-                timesteps(indices(start):indices(j + 1) - 1); %#ok<AGROW>
-            k = k + 1;
+            if start ~= 1  % ignore first, likely incomplete 
+                cycles{k} = ...
+                    timesteps(indices(start):indices(j + 1) - 1); %#ok<AGROW>
+                k = k + 1;
+            end
             start = j + 1;
         end
     end
