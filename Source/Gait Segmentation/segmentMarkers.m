@@ -1,9 +1,13 @@
 function cycles = segmentMarkers(side, motion_data)
+% Segment markers according to peak toe displacement in forward direction.
+%
+% This assumes that the input motion data is in the OpenSim coordinate
+% system (X forward from subject, Y up, Z to the right).    
 
     if strcmp(side, 'left')
-        str = 'L_MTP1_Z';
+        str = 'L_MTP1_X';
     else
-        str = 'R_MTP1_Z';
+        str = 'R_MTP1_X';
     end
     
     % Note: motion_data must be in OpenSim coordinate system!
