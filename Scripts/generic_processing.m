@@ -13,6 +13,13 @@ settings.grfs = 'D:\Dropbox\PhD\HIL Control\Automation-test\walking';
 % The location you want your processed files to be saved. 
 settings.save_dir = 'D:\Dropbox\PhD\HIL Control\Automation-test\walking\test_Motion_segment';
 
+% Name of marker and grf file folders.
+settings.marker_folder = 'Markers';
+settings.grf_folder = 'GRF';
+
+% Enable or disable usage of a dataset structure function. 
+settings.dataset_structure_function = 
+
 % Enable/disable detailed output - useful for error checking.
 settings.info = 0;
 

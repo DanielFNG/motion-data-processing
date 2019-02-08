@@ -1,4 +1,4 @@
-function processStaticData(static_file, rotations, save_dir)
+function processStaticData(save_dir, static_file, rotations)
     
     static = produceStatic(static_file);
     

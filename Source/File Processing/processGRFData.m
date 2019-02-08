@@ -1,4 +1,4 @@
-function processGRFData(grfs_file, rotations, save_dir, feet, mode, cutoff)
+function processGRFData(save_dir, grfs_file, rotations, feet, mode, cutoff)
 
     % Load grfs data.
     grfs = produceMOT(grfs_file, save_dir);

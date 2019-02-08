@@ -1,5 +1,5 @@
 function segment(...
-    side, mode, cutoff, grfs, kinematics, name, save_dir)
+    side, mode, cutoff, grfs, kinematics, name, kin_save_dir, grf_save_dir)
 % Segment marker and grf data. 
 %   GRFS is a grf Data object to be segmented.
 %   KINEMATICS is a kinematics Data object to be segmented.
@@ -47,6 +47,7 @@ segmentation_times = func(args{:}, motion_data);
 
 %% File output 
 combined_motion_data = {grfs kinematics};
+save_dirs = {grf_save_dir kin_save_dir};
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
         motion_data = combined_motion_data{i};
@@ -56,7 +57,7 @@ for i = 1:length(combined_motion_data)
                 motion_data.getColumn('time') <= segmentation_times{j}(end));
             segment = motion_data.slice(suitable_frames);
             segment.writeToFile(...
-                [save_dir filesep name '_' side '_cycle' num2str(j)]);
+                [save_dirs{i} filesep name '_' side '_cycle' num2str(j)]);
         end
     end
 end

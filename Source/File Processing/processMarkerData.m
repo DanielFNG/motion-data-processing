@@ -1,4 +1,4 @@
-function processMarkerData(marker_file, rotations, save_dir, feet, mode, cutoff)
+function processMarkerData(save_dir, marker_file, rotations, feet, mode, cutoff)
 
     % Load marker data.
     markers = Data(marker_file);
