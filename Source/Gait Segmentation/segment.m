@@ -51,7 +51,7 @@ save_dirs = {grf_save_dir kin_save_dir};
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
         side_save_dir = [save_dirs{i} filesep side];
-        if ~exist(side_save_dir)
+        if ~exist(side_save_dir, 'dir')
             mkdir(side_save_dir);
         end
         motion_data = combined_motion_data{i};
