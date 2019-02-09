@@ -50,14 +50,18 @@ combined_motion_data = {grfs kinematics};
 save_dirs = {grf_save_dir kin_save_dir};
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
+        side_save_dir = [save_dirs{i} filesep side];
+        if ~exist(side_save_dir)
+            mkdir(side_save_dir);
+        end
         motion_data = combined_motion_data{i};
         for j = 1:length(segmentation_times)
             suitable_frames = ...
                 (motion_data.getColumn('time') >= segmentation_times{j}(1) & ...
                 motion_data.getColumn('time') <= segmentation_times{j}(end));
             segment = motion_data.slice(suitable_frames);
-            segment.writeToFile(...
-                [save_dirs{i} filesep name '_' side '_cycle' num2str(j)]);
+            segment.writeToFile([side_save_dir filesep ...
+                name '_cycle' num2str(j)]);
         end
     end
 end

@@ -15,7 +15,7 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     
     [~, marker_name, ~] = fileparts(marker_file);
     [~, grfs_name, ~] = fileparts(grf_file);
-    if nargin == 9
+    if nargin == 10
         % Segment & save files.
         for foot = feet
             segment(foot{1}, mode, cutoff, grfs, markers, ...
