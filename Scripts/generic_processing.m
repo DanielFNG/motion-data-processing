@@ -18,9 +18,6 @@ settings.static_folder = 'Static';
 settings.marker_folder = 'Markers';
 settings.grf_folder = 'GRF';
 
-% Enable or disable usage of a dataset structure function. 
-settings.dataset_structure_function = 
-
 % Enable/disable detailed output - useful for error checking.
 settings.info = 0;
 

@@ -45,22 +45,11 @@ function status = batchProcessData(settings)
             files = [markers; grfs];
     end
     
-    % If requested, create nested save directories according to dataset
-    % structure function.
+    % Create save directories.
     paths = cell(n_dirs, n_files);
-%     if isfield(settings, 'dataset_structure_function')
-%         for i=1:n_dirs
-%             map = generateFilenameToPathMap(...
-%                 files{i, :}, settings.context_parameters);
-%             paths(i, :) = {map(};
-%         for i=1:n_files
-%             paths{:, i} = settings.dataset_structure_function(files{1, i});
-%         end
-%     else
-        for i=1:n_dirs
-            paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
-        end
-    %end
+    for i=1:n_dirs
+        paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
+    end
     
     status = 0;
     for i=1:n_files
