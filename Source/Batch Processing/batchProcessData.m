@@ -6,7 +6,7 @@ function status = batchProcessData(settings)
             dirs = {settings.markers};
             ext = '.trc';
             args = {settings.marker_rotations};
-            folder_names = {settings.marker_folder};
+            folder_names = {settings.static_folder};
         case 'Motion'
             func = @processMotionData;
             dirs = {settings.markers, settings.grfs};
@@ -48,19 +48,19 @@ function status = batchProcessData(settings)
     % If requested, create nested save directories according to dataset
     % structure function.
     paths = cell(n_dirs, n_files);
-    if isfield(settings, 'dataset_structure_function')
-        for i=1:n_dirs
-            map = generateFilenameToPathMap(...
-                files{i, :}, settings.context_parameters);
-            paths(i, :) = {map(};
-        for i=1:n_files
-            paths{:, i} = settings.dataset_structure_function(files{1, i});
-        end
-    else
+%     if isfield(settings, 'dataset_structure_function')
+%         for i=1:n_dirs
+%             map = generateFilenameToPathMap(...
+%                 files{i, :}, settings.context_parameters);
+%             paths(i, :) = {map(};
+%         for i=1:n_files
+%             paths{:, i} = settings.dataset_structure_function(files{1, i});
+%         end
+%     else
         for i=1:n_dirs
             paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
         end
-    end
+    %end
     
     status = 0;
     for i=1:n_files

@@ -14,6 +14,7 @@ settings.grfs = 'D:\Dropbox\PhD\HIL Control\Automation-test\walking';
 settings.save_dir = 'D:\Dropbox\PhD\HIL Control\Automation-test\walking\test_Motion_segment';
 
 % Name of marker and grf file folders.
+settings.static_folder = 'Static';
 settings.marker_folder = 'Markers';
 settings.grf_folder = 'GRF';
 
