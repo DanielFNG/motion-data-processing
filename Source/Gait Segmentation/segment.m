@@ -60,8 +60,7 @@ for i = 1:length(combined_motion_data)
                 (motion_data.getColumn('time') >= segmentation_times{j}(1) & ...
                 motion_data.getColumn('time') <= segmentation_times{j}(end));
             segment = motion_data.slice(suitable_frames);
-            segment.writeToFile([side_save_dir filesep ...
-                name '_cycle' num2str(j)]);
+            segment.writeToFile([side_save_dir filesep 'cycle' num2str(j)]);
         end
     end
 end

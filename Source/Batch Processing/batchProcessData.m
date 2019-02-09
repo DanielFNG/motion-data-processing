@@ -48,7 +48,15 @@ function status = batchProcessData(settings)
     % Create save directories.
     paths = cell(n_dirs, n_files);
     for i=1:n_dirs
-        paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
+        if ~isfield(settings, 'mode')
+            paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
+        else
+            for j=1:n_files
+                [~, name, ~] = fileparts(files{1, j});
+                paths(i, j) = ...
+                    {[settings.save_dir filesep name filesep folder_names{i}]};
+            end
+        end
     end
     
     status = 0;
