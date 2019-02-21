@@ -62,10 +62,13 @@ function status = batchProcessData(settings)
     status = 0;
     for i=1:n_files
         try
-            % Make the paths if they don't exist.
-            for j=1:n_dirs
-                if ~exist(paths{j, i}, 'dir')
-                    mkdir(paths{j, i});
+            % Make the paths if they don't exist - but only if not using
+            % segment.
+            if ~isfield(settings, 'mode')
+                for j=1:n_dirs
+                    if ~exist(paths{j, i}, 'dir')
+                        mkdir(paths{j, i});
+                    end
                 end
             end
             

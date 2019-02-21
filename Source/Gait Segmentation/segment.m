@@ -48,9 +48,11 @@ segmentation_times = func(args{:}, motion_data);
 %% File output 
 combined_motion_data = {grfs kinematics};
 save_dirs = {grf_save_dir kin_save_dir};
+
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
-        side_save_dir = [save_dirs{i} filesep side];
+        [path, folder] = fileparts(save_dirs{i});
+        side_save_dir = [path filesep side filesep folder];
         if ~exist(side_save_dir, 'dir')
             mkdir(side_save_dir);
         end
