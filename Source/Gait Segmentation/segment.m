@@ -42,13 +42,19 @@ switch mode
         motion_data = kinematics;
 end
 
-%% Identify the correct indices
-segmentation_times = func(args{:}, motion_data);
-
 %% File output 
 combined_motion_data = {grfs kinematics};
 save_dirs = {grf_save_dir kin_save_dir};
 
+%% Identify the correct segmentation times
+segmentation_times = func(args{:}, motion_data);
+if length(combined_motion_data) == 2
+    [marker_times, grf_times] = ...
+        adjustSegmentationTimes(segmentation_times, grfs, kinematics);
+end
+segmentation_times = {grf_times marker_times};
+
+%% Perform segmentation.
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
         [path, folder] = fileparts(save_dirs{i});
@@ -57,10 +63,10 @@ for i = 1:length(combined_motion_data)
             mkdir(side_save_dir);
         end
         motion_data = combined_motion_data{i};
-        for j = 1:length(segmentation_times)
-            suitable_frames = ...
-                (motion_data.getColumn('time') >= segmentation_times{j}(1) & ...
-                motion_data.getColumn('time') <= segmentation_times{j}(end));
+        for j = 1:length(segmentation_times{i})
+            suitable_frames = (motion_data.getColumn('time') >= ...
+                segmentation_times{i}{j}(1) & ...
+                motion_data.getColumn('time') <= segmentation_times{i}{j}(end));
             segment = motion_data.slice(suitable_frames);
             segment.writeToFile([side_save_dir filesep 'cycle' num2str(j)]);
         end
