@@ -1,4 +1,4 @@
-function processGRFData(grfs_file, rotations, save_dir, feet, mode, cutoff)
+function processGRFData(save_dir, grfs_file, rotations, feet, mode, cutoff)
 
     % Load grfs data.
     grfs = produceMOT(grfs_file, save_dir);
@@ -9,7 +9,7 @@ function processGRFData(grfs_file, rotations, save_dir, feet, mode, cutoff)
     [~, name, ~] = fileparts(grfs_file);
     if nargin == 6
         for i=1:length(feet)
-            segment(feet{i}, mode, cutoff, grfs, [], name, save_dir);
+            segment(feet{i}, mode, cutoff, grfs, [], name, [], save_dir);
         end
     else
         % Write .mot file.
