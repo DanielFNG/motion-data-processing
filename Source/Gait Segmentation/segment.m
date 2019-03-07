@@ -1,5 +1,5 @@
-function segment(...
-    side, mode, cutoff, grfs, kinematics, name, kin_save_dir, grf_save_dir)
+function segment(side, mode, cutoff, grfs, kinematics, ...
+    kin_save_dir, grf_save_dir, kin_save_folder, grf_save_folder)
 % Segment marker and grf data. 
 %   GRFS is a grf Data object to be segmented.
 %   KINEMATICS is a kinematics Data object to be segmented.
@@ -45,6 +45,7 @@ end
 %% File output 
 combined_motion_data = {grfs kinematics};
 save_dirs = {grf_save_dir kin_save_dir};
+save_folders = {grf_save_folder kin_save_folder};
 
 %% Identify the correct segmentation times
 segmentation_times = func(args{:}, motion_data);
@@ -57,8 +58,7 @@ segmentation_frames = {grf_frames marker_frames};
 %% Perform segmentation.
 for i = 1:length(combined_motion_data)
     if ~isempty(combined_motion_data{i})
-        [path, folder] = fileparts(save_dirs{i});
-        side_save_dir = [path filesep side filesep folder];
+        side_save_dir = [save_dirs{i} filesep side filesep save_folders{i}];
         if ~exist(side_save_dir, 'dir')
             mkdir(side_save_dir);
         end

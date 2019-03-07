@@ -28,7 +28,8 @@ function status = batchProcessData(settings)
     end
     
     if isfield(settings, 'mode')
-        args = [args {settings.feet}, settings.mode, settings.cutoff];
+        args = [args {settings.feet}, settings.mode, settings.cutoff, ...
+            folder_names];
     end
     
     n_dirs = length(dirs);
@@ -54,7 +55,7 @@ function status = batchProcessData(settings)
             for j=1:n_files
                 [~, name, ~] = fileparts(files{1, j});
                 paths(i, j) = ...
-                    {[settings.save_dir filesep name filesep folder_names{i}]};
+                    {[settings.save_dir filesep name]};
             end
         end
     end
