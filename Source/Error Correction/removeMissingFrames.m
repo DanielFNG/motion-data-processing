@@ -8,7 +8,7 @@ function removeMissingFrames(markers_file, grfs_file)
     markers.writeToFile(markers_file);
     
     % Deal with GRFs also. 
-    if nargin > 1
+    if nargin > 1 && ~isempty(grfs_file)
     
         % Identify the start/end of the problematic data - in terms of timesteps
         % to account for data frequency mismatch.
