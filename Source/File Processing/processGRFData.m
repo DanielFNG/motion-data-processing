@@ -9,7 +9,7 @@ function processGRFData(...
     
     if nargin == 7
         for i=1:length(feet)
-            segment(feet{i}, mode, cutoff, grfs, [], [], save_dir, save_folder);
+            segment(feet{i}, mode, cutoff, grfs, [], [], save_dir, [], save_folder);
         end
     else
         % Write .mot file.

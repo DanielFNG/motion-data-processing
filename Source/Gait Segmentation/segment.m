@@ -48,12 +48,13 @@ save_dirs = {grf_save_dir kin_save_dir};
 save_folders = {grf_save_folder kin_save_folder};
 
 %% Identify the correct segmentation times
-segmentation_times = func(args{:}, motion_data);
-if length(combined_motion_data) == 2
+[segmentation_times, segmentation_frames] = func(args{:}, motion_data);
+if length(combined_motion_data(~cellfun('isempty', combined_motion_data))) == 2
     [marker_frames, grf_frames] = ...
         adjustSegmentationTimes(segmentation_times, grfs, kinematics);
+    segmentation_frames = {grf_frames marker_frames};
 end
-segmentation_frames = {grf_frames marker_frames};
+segmentation_frames = {segmentation_frames segmentation_frames};  % cheeky
 
 %% Perform segmentation.
 for i = 1:length(combined_motion_data)
