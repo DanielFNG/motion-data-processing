@@ -1,4 +1,4 @@
-function cop = processCOP(cop, forces)
+function [cop, forces, moments, time] = processCOP(cop, forces, moments, time)
 
     % Value of vertical force for which we trust the CoP calculation.
     f_min = 200;
@@ -30,8 +30,27 @@ function cop = processCOP(cop, forces)
             % Get indices of trusted CoP data.
             valid_start_idx = find(forces(range, f_index) > f_min, ...
                 1, 'first') + range(1) -1;
+            
+            % If we are left with a small enough section of the gait cycle
+            % such that the CoP never becomes trustworthy (i.e. F_Y < f_min
+            % for the entire portion) then... bin it, it's useless anyway.
+            if isempty(valid_start_idx)
+                forces(range, :) = [];
+                moments(range, :) = [];
+                cop(range, :) = [];
+                time(range) = [];
+                continue;
+            end
+            
             valid_last_idx = find(forces(range, f_index) > f_min, 1, ...
                 'last') + range(1) - 1;
+            
+            % If there's no valid last index, but there is a valid start
+            % index since we made it here, just go to the end of the data
+            % that we have.
+            if isempty(valid_last_idx)
+                valid_last_idx = forces(end, f_index);
+            end
 
             % Add the nearest known points of value 0 (e.g. not stance
             % phase).
