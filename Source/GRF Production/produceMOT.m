@@ -4,13 +4,13 @@ function grf_data = produceMOT(input_file, save_dir)
 [time, forces, moments] = readGRFTextData(input_file);
 
 % Apply an initial LP filter of 6 Hz.
-[forces, moments] = lp4FilterGRFs(forces, moments, 6);
+[forces, moments] = lp4FilterGRFs(forces, moments, 6, 5);
 
 % Apply a threshold of 10N.
 [forces, moments] = thresholdGRFs(forces, moments, 10);
 
 % Refilter to remove the threshold effect.
-[forces, moments] = lp4FilterGRFs(forces, moments, 25);
+[forces, moments] = lp4FilterGRFs(forces, moments, 25, 25);
 
 % Rethreshold at a lower cutoff.
 [forces, moments] = thresholdGRFs(forces, moments, 2);
@@ -19,7 +19,7 @@ function grf_data = produceMOT(input_file, save_dir)
 cop = calcCOP(forces, moments);
 
 % Process the CoP data.
-cop = processCOP(cop, forces, moments);
+[cop, forces, moments, time] = processCOP(cop, forces, moments, time);
 
 % Calculate torques from free moments. 
 torques = calcTorques(forces, moments, cop);
