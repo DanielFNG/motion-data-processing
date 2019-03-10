@@ -3,7 +3,6 @@ Perform the necessary conversions and calculations from raw treadmill/Vicon data
 
 # Dependencies 
 OpenSim 3.3 with MATLAB API set up  
-MATLAB Signal Processing Toolbox  
-MATLAB Curve Fitting Toolbox  
+MATLAB Signal Processing Toolbox    
 DanielFNG/opensim-matlab  
 DanielFNG/generic-tools
