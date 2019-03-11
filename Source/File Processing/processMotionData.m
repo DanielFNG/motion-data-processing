@@ -13,7 +13,6 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     markers.rotate(marker_rotations{:});
     grfs.rotate(grf_rotations{:});
     
-    
     if nargin == 12
         % Segment & save files.
         for foot = feet

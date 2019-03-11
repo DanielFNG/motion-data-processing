@@ -39,7 +39,7 @@ function [cop, forces, moments, time] = processCOP(cop, forces, moments, time)
                 moments(range, :) = [];
                 cop(range, :) = [];
                 time(range) = [];
-                continue;
+                break;
             end
             
             valid_last_idx = find(forces(range, f_index) > f_min, 1, ...

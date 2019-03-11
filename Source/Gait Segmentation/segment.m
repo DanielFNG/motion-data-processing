@@ -53,8 +53,9 @@ if length(combined_motion_data(~cellfun('isempty', combined_motion_data))) == 2
     [marker_frames, grf_frames] = ...
         adjustSegmentationTimes(segmentation_times, grfs, kinematics);
     segmentation_frames = {grf_frames marker_frames};
+else
+    segmentation_frames = {segmentation_frames segmentation_frames};  % cheeky
 end
-segmentation_frames = {segmentation_frames segmentation_frames};  % cheeky
 
 %% Perform segmentation.
 for i = 1:length(combined_motion_data)
