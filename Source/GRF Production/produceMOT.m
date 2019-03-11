@@ -4,7 +4,7 @@ function grf_data = produceMOT(input_file, save_dir)
 [time, forces, moments] = readGRFTextData(input_file);
 
 % Apply an initial LP filter of 6 Hz.
-[forces, moments] = lp4FilterGRFs(forces, moments, 6, 5);
+[forces, moments] = lp4FilterGRFs(forces, moments, 6, 6);
 
 % Apply a threshold of 10N.
 [forces, moments] = thresholdGRFs(forces, moments, 10);
