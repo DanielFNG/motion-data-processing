@@ -11,21 +11,26 @@ function status = batchProcessData(settings)
             func = @processMotionData;
             dirs = {settings.markers, settings.grfs};
             args = {settings.marker_rotations, settings.grf_rotations, ...
-                settings.speed, settings.direction, settings.time_delay};
+                settings.time_delay};
             folder_names = {settings.marker_folder, settings.grf_folder};
         case 'Marker'
             func = @processMarkerData;
             dirs = {settings.markers};
             ext = '.trc';
-            args = {settings.marker_rotations, ...
-                settings.speed, settings.direction};
+            args = {settings.marker_rotations};
             folder_names = {settings.marker_folder};
         case 'GRF'
             func = @processGRFData;
             dirs = {settings.grfs};
             ext = '.txt';
-            args = {settings.grf_rotations, settings.speed, settings.direction};
+            args = {settings.grf_rotations};
             folder_names = {settings.grf_folder};
+    end
+    
+    if isfield(settings, 'speed')
+        args = [args {settings.speed, settings.direction}];
+    else
+        args = [args {[], []}];
     end
     
     if isfield(settings, 'mode')
