@@ -1,5 +1,5 @@
-function processMarkerData(...
-    save_dir, marker_file, rotations, feet, mode, cutoff, save_folder)
+function processMarkerData(save_dir, marker_file, rotations, speed, ...
+    direction, feet, mode, cutoff, save_folder)
 
     % Load marker data.
     markers = Data(marker_file);
@@ -7,8 +7,13 @@ function processMarkerData(...
     % Rotate.
     markers.rotate(rotations{:});
     
+    % Compensate for motion speed.
+    if ~isempty(speed)
+        markers = compensateSpeedMarkers(markers, speed, direction);
+    end
     
-    if nargin == 7
+    % Segmentation if requested.
+    if nargin == 9
         for i=1:length(feet)
             segment(feet{i}, mode, cutoff, [], markers, save_dir, [], ...
                 save_folder, []);

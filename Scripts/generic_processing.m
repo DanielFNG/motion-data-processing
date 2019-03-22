@@ -25,6 +25,10 @@ settings.info = 0;
 settings.marker_rotations = {0, 270, 0};
 settings.grf_rotations = {0, 90, 0};
 
+% Settings for speed compensation.
+settings.speed = 0.8;
+settings.direction = 'x';
+
 % Time delay between grf + marker data - standard value for UoE setup.
 settings.time_delay = 16*(1/600);
 
