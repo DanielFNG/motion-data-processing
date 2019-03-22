@@ -3,6 +3,9 @@ function processMarkerData(save_dir, marker_file, rotations, speed, ...
 
     % Load marker data.
     markers = Data(marker_file);
+    
+    % Convert units to 'm' if they're not in that form already.
+    markers.convertUnits('m');
         
     % Rotate.
     markers.rotate(rotations{:});
