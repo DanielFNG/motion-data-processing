@@ -8,4 +8,4 @@ DanielFNG/opensim-matlab
 DanielFNG/generic-tools
 
 # Testing   
-Run runtests('testFileProcessing') to test the main file processing function.  
+Run `runtests('testFileProcessing')` to test the main file processing functions.  
