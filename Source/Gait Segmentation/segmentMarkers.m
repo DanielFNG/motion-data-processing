@@ -22,19 +22,26 @@ function [cycles_time, cycles_frame] = segmentMarkers(side, motion_data)
     % Find the crossing points.
     crossing_points = [];
     for i=2:length(angle)
-        if angle(i) < 0 && angle(i - 1 ) >= 0
+        if angle(i) > 0 && angle(i - 1) <= 0
             crossing_points = [crossing_points i];
         end
     end
+    if crossing_points(end) ~= length(angle)
+        crossing_points = [crossing_points length(angle)];
+    end
     
-    % Find the largest minimum peak between each crossing point.
+    % Find the midpoint between the two largest maximum peaks between each 
+    % crossing point.
     indices = [];
     for i=2:length(crossing_points)
         temp = zeros(size(angle));
         range = crossing_points(i - 1):crossing_points(i);
         temp(range) = angle(range);
-        [~, idx] = min(temp);
-        indices = [indices idx];
+        pks = findpeaks(temp);
+        if length(pks) > 1
+            pks(pks == max(pks)) = [];
+        end
+        indices = [indices find(temp == max(pks))];
     end
     
     % Note: motion_data must be in OpenSim coordinate system!

@@ -25,5 +25,18 @@ function grf_data = compensateSpeedGRF(grf_data, speed, direction)
             
         end      
     end
+    
+    % Re-set any CoP's to 0 if the vertical force is 0.
+    for i=1:grf_data.NCols
+        if strcmpi(grf_data.Labels{i}(end-1:end), 'vy')
+            force_values = grf_data.getColumn(i);
+            for direction = 'xyz'
+                label = [grf_data.Labels{i}(1:end-2) 'p' direction];
+                cop = grf_data.getColumn(label);
+                cop(force_values < 1e-8) = 0;
+                grf_data.setColumn(label, cop);
+            end
+        end
+    end
 
 end
