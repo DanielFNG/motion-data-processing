@@ -27,6 +27,12 @@ function status = batchProcessData(settings)
             folder_names = {settings.grf_folder};
     end
     
+    if isfield(settings, 'speed')
+        args = [args {settings.speed, settings.direction}];
+    else
+        args = [args {[], []}];
+    end
+    
     if isfield(settings, 'mode')
         args = [args {settings.feet}, settings.mode, settings.cutoff, ...
             folder_names];

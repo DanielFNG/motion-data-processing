@@ -14,9 +14,6 @@ function marker_data = compensateSpeedMarkers(marker_data, speed, direction)
     % Get the total time of motion.
     time = marker_data.getTotalTime();
     
-    % Convert units to 'm' if they're not already.
-    marker_data.convertUnits('m');
-    
     % Loop over the marker data labels. For every trajectory in the correct
     % direction, compensate for the provided fixed speed.
     for i=1:marker_data.NCols
