@@ -17,7 +17,7 @@ grf_dir = 'GRF';
 grf_ext = '.mot';
 
 % Paths to data directories and data files.
-home = 'C:\Users\danie\Documents\GitHub\motion-data-processing';%getenv('MDP_HOME');
+home = getenv('MDP_HOME');
 testing = [home filesep 'Source' filesep 'Testing' filesep 'Data'];
 raw_dir = [testing filesep 'Raw'];
 true_dir = [testing filesep 'True'];
