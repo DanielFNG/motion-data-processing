@@ -41,7 +41,9 @@ function [cycles_time, cycles_frame] = segmentMarkers(side, motion_data)
         if length(pks) > 1
             pks(pks == max(pks)) = [];
         end
-        indices = [indices find(temp == max(pks))];
+        if ~isempty(pks)
+            indices = [indices find(temp == max(pks))];
+        end
     end
     
     % Note: motion_data must be in OpenSim coordinate system!
