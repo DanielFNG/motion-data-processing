@@ -6,3 +6,6 @@ OpenSim 3.3 with MATLAB API set up
 MATLAB Signal Processing Toolbox    
 DanielFNG/opensim-matlab  
 DanielFNG/generic-tools
+
+# Testing   
+Run runtests('testFileProcessing') to test the main file processing function.  
