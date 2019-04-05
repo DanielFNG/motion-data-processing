@@ -65,9 +65,12 @@ for i = 1:length(combined_motion_data)
             mkdir(side_save_dir);
         end
         motion_data = combined_motion_data{i};
-        for j = 1:length(segmentation_frames{i})
+        n_cycles = length(segmentation_frames{i});
+        for j = 1:n_cycles
+            digits = numel(num2str(n_cycles));
             segment = motion_data.slice(segmentation_frames{i}{j});
-            segment.writeToFile([side_save_dir filesep 'cycle' num2str(j)]);
+            segment.writeToFile(...
+                [side_save_dir filesep 'cycle' sprintf(['%0' digits 'i'], j)]);
         end
     end
 end
