@@ -1,4 +1,5 @@
-function [cop, forces, moments, time] = processCOP(cop, forces, moments, time)
+function [cop, forces, moments, time] = ...
+    processCOP(cop, forces, moments, time)
 
     % Value of vertical force for which we trust the CoP calculation.
     f_min = 200;
@@ -52,29 +53,8 @@ function [cop, forces, moments, time] = processCOP(cop, forces, moments, time)
                 valid_last_idx = forces(end, f_index);
             end
 
-%             % Add the nearest known points of value 0 (e.g. not stance
-%             % phase).
-%             valid = valid_start_idx:valid_last_idx;
-%             z_vals = cop(valid, cop_z_index);
-%             x_vals = cop(valid, cop_x_index);
-%             if range(1) ~= valid_start_idx
-%                 valid = [range(1) valid]; %#ok<*AGROW>
-%                 z_vals = [0; z_vals];
-%                 x_vals = [0; x_vals];
-%             end
-%             if range(end) ~= valid_last_idx
-%                 valid = [valid range(end)];
-%                 z_vals = [z_vals; 0];
-%                 x_vals = [x_vals; 0];
-%             end
-% 
-%             % Extrapolate the data where F_Y < f_min.
-%             cop(range, cop_z_index) = ...
-%                 interp1(valid, z_vals, range, 'pchip', 'extrap');
-%             cop(range, cop_x_index) = ...
-%                 interp1(valid, x_vals, range, 'pchip', 'extrap');
-
-           % Assume that CoP is unchanged outside of the valid range.
+           % Assume that CoP is unchanged outside of the valid range - but
+           % take in to account the relative speed.
            for ind = [cop_z_index, cop_x_index]
                cop(range(1):valid_start_idx - 1, ind) = ...
                    cop(valid_start_idx, ind);
