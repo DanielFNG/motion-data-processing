@@ -30,7 +30,9 @@ function status = batchProcessData(settings)
     if isfield(settings, 'speed')
         args = [args {settings.speed, settings.direction}];
     else
-        args = [args {[], []}];
+        if ~strcmp(settings.analysis, 'Static')
+            args = [args {[], []}];
+        end
     end
     
     if isfield(settings, 'mode')
