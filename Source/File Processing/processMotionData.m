@@ -1,5 +1,6 @@
 function processMotionData(marker_save_dir, grf_save_dir, ...
-    marker_file, grf_file, marker_rotations, grf_rotations, time_delay, ...
+    marker_file, grf_file, marker_rotations, marker_left_handed, ...
+    grf_rotations, grf_left_handed, time_delay, ...
     speed, direction, feet, mode, cutoff, marker_folder, grf_folder)
 
     % Produce data objects.
@@ -13,8 +14,8 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     [markers, grfs] = synchronise(marker_data, grf_data, time_delay);
     
     % Rotate.
-    markers.rotate(marker_rotations{:});
-    grfs.rotate(grf_rotations{:});
+    markers.rotate(marker_rotations{:}, marker_left_handed);
+    grfs.rotate(grf_rotations{:}, grf_left_handed);
     
     % Speed compensation.
     if ~isempty(speed)
@@ -22,7 +23,7 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
         grfs = compensateSpeedGRF(grfs, speed, direction);
     end
     
-    if nargin == 14
+    if nargin == 16
         % Segment & save files.
         for foot = feet
             segment(foot{1}, mode, cutoff, grfs, markers, ...
