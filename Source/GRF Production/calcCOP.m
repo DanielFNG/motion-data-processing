@@ -8,7 +8,7 @@ cop = zeros(size(forces, 1), 6);
 
 % Perform CoP calculations.
 for i=0:1
-    index = i*3; % Add 0 for right foot calcs, 3 for left.
+    index = i*3; % Add 0 for left foot calcs, 3 for right.
     cop(:, 1 + index) = (h*forces(:, 1 + index) - moments(:, 3 + index))./ ...
         forces(:, 2 + index);
     cop(:, 3 + index) = (h*forces(:, 3 + index) + moments(:, 1 + index))./ ...
