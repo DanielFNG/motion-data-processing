@@ -55,6 +55,11 @@ function status = batchProcessData(settings)
             files = [markers; grfs];
     end
     
+    % Get the paths to the speed files if necessary. 
+    if isa(settings.speed, 'char')
+        [~, speeds] = getFilePaths(settings.speed, '.txt');
+    end
+    
     % Create save directories.
     paths = cell(n_dirs, n_files);
     for i=1:n_dirs
@@ -82,8 +87,18 @@ function status = batchProcessData(settings)
                 end
             end
             
+            % If necessary find and replace the speeds argument.
+            if isa(settings.speed, 'char')
+                args{strcmp(args, settings.speed)} = speeds{i};
+            end
+            
             % Run the desired processing function. 
             func(paths{:, i}, files{:, i}, args{:});
+            
+            % Re-set the speeds argument.
+            if isa(settings.speed, 'char')
+                args{strcmp(args, speeds{i})} = settings.speed;
+            end
         catch err
             status = 1;
             fprintf('Failed to process on entry %i.\n', i);
