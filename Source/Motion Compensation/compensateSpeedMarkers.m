@@ -5,14 +5,20 @@ function marker_data = compensateSpeedMarkers(marker_data, speed, direction)
 %
 % Inputs:
 %           - marker_data: marker data as a TRCData object
-%           - speed: speed of reference frame motion
+%           - speed: array of speeds of reference frame
 %           - direction: direction of reference frame motion (x/y/z)
 %
 % Output:
 %           - the adjusted marker_data
 
-    % Get the total time of motion.
-    time = marker_data.getTotalTime();
+    % Get time array.
+    time = marker_data.getColumn('time');
+
+    % Construct speed array - depends on form of input.
+    if length(speed) == 1
+        speeds = zeros(size(time));
+        speeds(:) = speed;
+    end
     
     % Loop over the marker data labels. For every trajectory in the correct
     % direction, compensate for the provided fixed speed.
@@ -20,7 +26,7 @@ function marker_data = compensateSpeedMarkers(marker_data, speed, direction)
         if strcmpi(marker_data.Labels{i}(end), direction)
             initial_values = marker_data.getColumn(i);
             adjusted_values = accountForMovingReferenceFrame(...
-                initial_values, time, speed);
+                initial_values, time, speeds);
             marker_data.setColumn(i, adjusted_values);
         end
     end
