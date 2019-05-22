@@ -56,7 +56,7 @@ function status = batchProcessData(settings)
     end
     
     % Get the paths to the speed files if necessary. 
-    if isa(settings.speed, 'char')
+    if isfield(settings, 'speed') && isa(settings.speed, 'char')
         [~, speeds] = getFilePaths(settings.speed, '.txt');
     end
     
@@ -88,7 +88,7 @@ function status = batchProcessData(settings)
             end
             
             % If necessary find and replace the speeds argument.
-            if isa(settings.speed, 'char')
+            if isfield(settings, 'speed') && isa(settings.speed, 'char')
                 args{strcmp(args, settings.speed)} = speeds{i};
             end
             
@@ -96,7 +96,7 @@ function status = batchProcessData(settings)
             func(paths{:, i}, files{:, i}, args{:});
             
             % Re-set the speeds argument.
-            if isa(settings.speed, 'char')
+            if isfield(settings, 'speed') && isa(settings.speed, 'char')
                 args{strcmp(args, speeds{i})} = settings.speed;
             end
         catch err
