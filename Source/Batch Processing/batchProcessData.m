@@ -100,12 +100,40 @@ function status = batchProcessData(settings)
                 args{strcmp(args, speeds{i})} = settings.speed;
             end
         catch err
-            status = 1;
-            fprintf('Failed to process on entry %i.\n', i);
-            fprintf(err.message);
-            fprintf('\n');
-            if settings.info 
-                disp(getReport(err, 'extended', 'hyperlinks', 'on'));
+            % If there are gaps at the start or end of a trial, and
+            % auto-crop is selected, and we have marker data...
+            if strcmp(err.identifier, 'Data:Gaps') && ...
+                    settings.crop && ~strcmp(settings.analysis, 'GRF')
+                try
+                    % Crop the current trial.
+                    removeMissingFrames(files{:, i});
+
+                    % Re-run processing step.
+                    func(paths{:, i}, files{:, i}, args{:});
+                catch err2
+                    status = 1;
+                    fprintf('Failed to process on entry %i.\n', i);
+                    fprintf(err2.message);
+                    fprintf('\n');
+                    fprintf(['It is likely that gaps are present in the '...
+                        'data. Please correct within Vicon Nexus.\n']);
+                    if settings.info
+                        disp(getReport(err, 'extended', 'hyperlinks', 'on'));
+                    end
+                end
+                
+                % Re-set the speeds argument.
+                if isfield(settings, 'speed') && isa(settings.speed, 'char')
+                    args{strcmp(args, speeds{i})} = settings.speed;
+                end
+            else
+                status = 1;
+                fprintf('Failed to process on entry %i.\n', i);
+                fprintf(err.message);
+                fprintf('\n');
+                if settings.info 
+                    disp(getReport(err, 'extended', 'hyperlinks', 'on'));
+                end
             end
         end
     end
