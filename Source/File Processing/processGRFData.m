@@ -9,14 +9,20 @@ function processGRFData(save_dir, grfs_file, rotations, left_handed, ...
     
     % Compensate for motion speed.
     if ~isempty(speed)
+        if isa(speed, 'char')
+            speed_data = Data(speed);
+            [grfs, speed_data] = synchronise(grfs, speed_data, 0);
+            speed_data.spline(grfs.getColumn('time'));
+            speed = calculateSpeedArray(speed_data);
+        end
         grfs = compensateSpeedGRF(grfs, speed, direction);
     end
     
     % Segmentation if necessary.
     if nargin == 10
         for i=1:length(feet)
-            segment(...
-                feet{i}, mode, cutoff, grfs, [], [], save_dir, [], save_folder);
+            segment(feet{i}, mode, cutoff, grfs, [], [], save_dir, ...
+                [], save_folder);
         end
     else
         % Write .mot file.

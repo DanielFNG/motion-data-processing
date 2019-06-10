@@ -5,21 +5,26 @@ function grf_data = compensateSpeedGRF(grf_data, speed, direction)
 %
 % Inputs:
 %           - grf_data: grf data as a MOTData object
-%           - speed: speed of reference frame motion
+%           - speed: array of speeds of reference frame or single speed
 %           - direction: direction of reference frame motion (x/y/z)
 %
 % Output:
 %           - the adjusted grf data
 
-    % Get the total time of motion.
-    time = grf_data.getTotalTime();
+    % Get the time array.
+    time = grf_data.getColumn('time');
+    
+    % Construct speed array - depends on form of input.
+    if length(speed) == 1 
+        speed = ones(size(time))*speed;
+    end
     
     % Loop over the grf data labels. For every CoP trajectory in the
     % correct direction, compensate for the provided fixed speed. 
     for i=1:grf_data.NCols
         if strcmpi(grf_data.Labels{i}(end-1:end), ['p' direction])
             initial_values = grf_data.getColumn(i);
-            adjusted_values = accountForMovingReferenceFrame(...
+            adjusted_values = accountForReferenceFrameMovement(...
                 initial_values, time, speed);
             grf_data.setColumn(i, adjusted_values);
             

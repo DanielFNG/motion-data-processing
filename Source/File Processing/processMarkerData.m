@@ -10,7 +10,8 @@ function processMarkerData(save_dir, marker_file, rotations, left_handed, ...
     % Rotate.
     markers.rotate(rotations{:}, left_handed);
     
-    % Compensate for motion speed.
+    % Compensate for motion speed. Only supports fixed speed since we only
+    % have marker data. 
     if ~isempty(speed)
         markers = compensateSpeedMarkers(markers, speed, direction);
     end

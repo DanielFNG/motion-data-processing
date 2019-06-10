@@ -19,8 +19,18 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     
     % Speed compensation.
     if ~isempty(speed)
+        if isa(speed, 'char')
+            speed_data = Data(speed);
+            [~, speed_data] = ...
+                synchronise(marker_data, speed_data, time_delay);
+            grf_speed = copy(speed_data);
+            speed_data.spline(markers.getColumn('time'));
+            grf_speed.spline(grfs.getColumn('time'));
+            speed = calculateSpeedArray(speed_data, 1, 0.01);
+            grf_speed = calculateSpeedArray(grf_speed, 1, 0.01);
+        end
         markers = compensateSpeedMarkers(markers, speed, direction);
-        grfs = compensateSpeedGRF(grfs, speed, direction);
+        grfs = compensateSpeedGRF(grfs, grf_speed, direction);
     end
     
     if nargin == 16
