@@ -2,7 +2,7 @@ function [forces, moments] = ...
     lp4FilterGRFs(forces, moments, force_freq, moments_freq, fp_frame_rate)
 
     if nargin < 5
-        fp_frame_rate = 600;
+        fp_frame_rate = 1000;
     end
     dt = 1/fp_frame_rate;
 

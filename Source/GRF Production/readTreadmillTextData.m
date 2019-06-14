@@ -1,4 +1,4 @@
-function [time, forces, moments] = readGRFTextData(input_file)
+function [time, forces, moments] = readTreadmillTextData(input_file)
 %   Read & store forces/moments from D-Flow produced .txt file.
 %   Resulting format is as follows:
 %   
