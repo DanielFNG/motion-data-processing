@@ -39,7 +39,17 @@ function [time, forces, moments] = readViconTextData(input_file)
         forces(:, 1 + i:3 + i) = ...
             transpose(R*transpose(forces(:, 1 + i:3 + i)));
         moments(:, 1 + i:3 + i) = ...
-            transpose(R*transpose(forces(:, 1 + i:3 + i)));
+            transpose(R*transpose(moments(:, 1 + i:3 + i)));
     end
+    
+    %% TEMPORARY BUGFIX!!
+%     forces(:, 1) = -forces(:, 1);
+     forces(:, 3) = -forces(:, 3);
+%     forces(:, 4) = -forces(:, 4);
+     forces(:, 6) = -forces(:, 6);
+%     moments(:, 1) = -moments(:, 1);
+     moments(:, 3) = -moments(:, 3);
+%     moments(:, 4) = -moments(:, 4);
+     moments(:, 6) = -moments(:, 6);
     
 end
