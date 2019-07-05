@@ -1,7 +1,10 @@
-function grf_data = produceMOT(input_file, save_dir)
+function grf_data = produceMOT(input_file, system, save_dir)
 
 % Get the arrays of time, forces and moments.
 [time, forces, moments] = readViconTextData(input_file);
+
+% Convert forces and moments to OpenSim co-ordinates.
+[forces, moments] = convertSystem(forces, moments, system);
 
 % Apply an initial LP filter of 6 Hz.
 [forces, moments] = lp4FilterGRFs(forces, moments, 6, 6);
@@ -19,7 +22,7 @@ function grf_data = produceMOT(input_file, save_dir)
 cop = calcCOP(forces, moments);
 
 % Process the CoP data.
-[cop, forces, moments, time] = processCOP(cop, forces, moments, time);
+%[cop, forces, moments, time] = processCOP(cop, forces, moments, time);
 
 % Calculate torques from free moments. 
 torques = calcTorques(forces, moments, cop);

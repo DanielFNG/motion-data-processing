@@ -1,11 +1,8 @@
-function times = processGRFData(save_dir, grfs_file, rotations, left_handed, ...
+function times = processGRFData(save_dir, grfs_file, system, ...
     speed, direction, feet, mode, cutoff, save_folder)
 
     % Load grfs data.
-    grfs = produceMOT(grfs_file, save_dir);
-    
-    % Rotate.
-    grfs.rotate(rotations{:}, left_handed);
+    grfs = produceMOT(grfs_file, system, save_dir);
     
     % Compensate for motion speed.
     if ~isempty(speed)
