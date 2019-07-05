@@ -1,7 +1,7 @@
 function grf_data = produceMOT(input_file, save_dir)
 
-% Get the time array, forces and moments from the .txt GRF file.
-[time, forces, moments] = readGRFTextData(input_file);
+% Get the arrays of time, forces and moments.
+[time, forces, moments] = readViconTextData(input_file);
 
 % Apply an initial LP filter of 6 Hz.
 [forces, moments] = lp4FilterGRFs(forces, moments, 6, 6);
