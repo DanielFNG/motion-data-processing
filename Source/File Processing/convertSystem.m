@@ -1,25 +1,19 @@
-function [forces, moments] = convertSystem(forces_in, moments_in, system)
+function data_out = convertSystem(data_in, system)
 % Convert forces & moments to OpenSim co-ordinate system. 
 %   Uses knowledge of co-ordinate system in which data was collected as
 %   supplied by user.
 
     % Create output arrays.
-    forces = zeros(size(forces_in));
-    moments = zeros(size(moments_in));
+    data_out = zeros(size(data_in));
 
     % Identify system parameters.
     [mx, ix] = convertSystemIdentifier(system.forward);
     [my, iy] = convertSystemIdentifier(system.up);
     [mz, iz] = convertSystemIdentifier(system.right);
 
-    % Convert coordinate systems. 
-    for add = [0, 3]
-        forces(:, 1 + add) = mx*forces_in(:, ix + add);
-        forces(:, 2 + add) = my*forces_in(:, iy + add);
-        forces(:, 3 + add) = mz*forces_in(:, iz + add);
-        moments(:, 1 + add) = mx*moments_in(:, ix + add);
-        moments(:, 2 + add) = my*moments_in(:, iy + add);
-        moments(:, 3 + add) = mz*moments_in(:, iz + add);
-    end
+    % Convert coordinate systems.
+    data_out(:, 1 + add) = mx*data_in(:, ix + add);
+    data_out(:, 2 + add) = my*data_in(:, iy + add);
+    data_out(:, 3 + add) = mz*data_in(:, iz + add);
 
 end
