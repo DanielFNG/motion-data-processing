@@ -12,8 +12,8 @@ function data_out = convertSystem(data_in, system)
     [mz, iz] = convertSystemIdentifier(system.right);
 
     % Convert coordinate systems.
-    data_out(:, 1 + add) = mx*data_in(:, ix + add);
-    data_out(:, 2 + add) = my*data_in(:, iy + add);
-    data_out(:, 3 + add) = mz*data_in(:, iz + add);
+    data_out(:, 1 + add) = mx*data_in(:, ix);
+    data_out(:, 2 + add) = my*data_in(:, iy);
+    data_out(:, 3 + add) = mz*data_in(:, iz);
 
 end
