@@ -3,9 +3,13 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     grf_rotations, grf_left_handed, time_delay, ...
     speed, direction, feet, mode, cutoff, marker_folder, grf_folder)
 
+    system.forward = '+y';
+    system.up = '-z';
+    system.right = '+x';
+
     % Produce data objects.
     marker_data = Data(marker_file);
-    grf_data = produceMOT(grf_file, grf_save_dir);
+    grf_data = produceMOT(grf_file, system, grf_save_dir);
     
     % Convert marker units to 'm' if they're not in that form already.
     marker_data.convertUnits('m');
@@ -14,8 +18,13 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     [markers, grfs] = synchronise(marker_data, grf_data, time_delay);
     
     % Rotate.
-    markers.rotate(marker_rotations{:}, marker_left_handed);
-    grfs.rotate(grf_rotations{:}, grf_left_handed);
+    %markers.rotate(marker_rotations{:}, marker_left_handed);
+    %grfs.rotate(grf_rotations{:}, grf_left_handed);
+    % Rotate.
+    system.forward = '+z';
+    system.up = '+y';
+    system.right = '-x';
+    markers.convert(system);
     
     % Speed compensation.
     if ~isempty(speed)

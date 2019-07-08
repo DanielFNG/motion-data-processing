@@ -1,4 +1,4 @@
-function processMarkerData(save_dir, marker_file, system, ...
+function processMarkerData(save_dir, marker_file, system, oi, ...
     speed, direction, feet, mode, cutoff, save_folder)
 
     % Load marker data.
@@ -6,9 +6,14 @@ function processMarkerData(save_dir, marker_file, system, ...
     
     % Convert units to 'm' if they're not in that form already.
     markers.convertUnits('m');
-        
+    
+    clear('system');
+    system.forward = '+z';
+    system.up = '+y';
+    system.right = '-x';
+    
     % Rotate.
-    markers.rotate(rotations{:}, left_handed);
+    markers.convert(system);
     
     % Compensate for motion speed. Only supports fixed speed since we only
     % have marker data. 

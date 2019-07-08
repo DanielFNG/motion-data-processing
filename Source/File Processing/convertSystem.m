@@ -12,8 +12,14 @@ function data_out = convertSystem(data_in, system)
     [mz, iz] = convertSystemIdentifier(system.right);
 
     % Convert coordinate systems.
-    data_out(:, 1 + add) = mx*data_in(:, ix);
-    data_out(:, 2 + add) = my*data_in(:, iy);
-    data_out(:, 3 + add) = mz*data_in(:, iz);
+    if size(data_out, 1) < size(data_out, 2)
+        data_out(1, :) = mx*data_in(ix, :);
+        data_out(2, :) = my*data_in(iy, :);
+        data_out(3, :) = mz*data_in(iz, :);
+    else
+        data_out(:, 1) = mx*data_in(:, ix);
+        data_out(:, 2) = my*data_in(:, iy);
+        data_out(:, 3) = mz*data_in(:, iz);
+    end
 
 end

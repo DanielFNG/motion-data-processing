@@ -4,8 +4,10 @@ function grf_data = produceMOT(input_file, system, save_dir)
 [time, forces, moments] = readViconTextData(input_file);
 
 % Convert forces and moments to OpenSim co-ordinates.
-forces = convertSystem(forces, system);
-moments = convertSystem(moments, system);
+forces(:, 1:3) = convertSystem(forces(:, 1:3), system);
+forces(:, 4:6) = convertSystem(forces(:, 4:6), system);
+moments(:, 1:3) = convertSystem(moments(:, 1:3), system);
+moments(:, 4:6) = convertSystem(moments(:, 4:6), system);
 
 % Apply an initial LP filter of 6 Hz.
 [forces, moments] = lp4FilterGRFs(forces, moments, 6, 6);

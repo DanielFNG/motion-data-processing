@@ -1,6 +1,11 @@
 function times = processGRFData(save_dir, grfs_file, system, ...
     speed, direction, feet, mode, cutoff, save_folder)
 
+    clear('system');
+    system.forward = '+z';
+    system.up = '+y';
+    system.right = '-x';
+
     % Load grfs data.
     grfs = produceMOT(grfs_file, system, save_dir);
     
