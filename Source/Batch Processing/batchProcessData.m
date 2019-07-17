@@ -24,7 +24,7 @@ function status = batchProcessData(settings)
             func = @processGRFData;
             dirs = {settings.grfs};
             ext = '.txt';
-            args = {settings.grf_rotations, settings.grf_left_handed};
+            args = {settings.grf_system};
             folder_names = {settings.grf_folder};
     end
     
