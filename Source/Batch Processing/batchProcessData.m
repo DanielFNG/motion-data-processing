@@ -5,7 +5,7 @@ function status = batchProcessData(settings)
             func = @processStaticData;
             dirs = {settings.markers};
             ext = '.trc';
-            args = {settings.marker_rotations, settings.marker_left_handed};
+            args = {settings.marker_system};
             folder_names = {settings.static_folder};
         case 'Motion'
             func = @processMotionData;

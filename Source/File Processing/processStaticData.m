@@ -1,9 +1,10 @@
-function processStaticData(save_dir, static_file, rotations, left_handed)
+function processStaticData(save_dir, static_file, system)
     
+    % Produce static TRC object. 
     static = produceStatic(static_file);
     
-    % Rotate.
-    static.rotate(rotations{:}, left_handed);
+    % Convert to OpenSim co-ordinates.
+    static.convert(system);
     
     % Write output static file.
     [~, name, ~] = fileparts(static_file);
