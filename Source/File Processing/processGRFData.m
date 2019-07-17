@@ -1,5 +1,5 @@
 function times = processGRFData(save_dir, grfs_file, system, ...
-    speed, direction, feet, mode, cutoff, save_folder)
+    speed, feet, mode, cutoff, save_folder)
 
     % Load grfs data.
     grfs = produceMOT(grfs_file, system, save_dir);
@@ -12,7 +12,7 @@ function times = processGRFData(save_dir, grfs_file, system, ...
             speed_data.spline(grfs.getColumn('time'));
             speed = calculateSpeedArray(speed_data);
         end
-        grfs = compensateSpeedGRF(grfs, speed, direction);
+        grfs = compensateSpeedGRF(grfs, speed, 'x');
     end
     
     % Segmentation if necessary.

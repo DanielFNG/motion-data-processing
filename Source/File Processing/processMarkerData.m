@@ -1,4 +1,4 @@
-function processMarkerData(save_dir, marker_file, system, speed, direction, ...
+function processMarkerData(save_dir, marker_file, system, speed, ...
     feet, mode, cutoff, save_folder)
 
     % Load marker data.
@@ -13,7 +13,7 @@ function processMarkerData(save_dir, marker_file, system, speed, direction, ...
     % Compensate for motion speed. Only supports fixed speed since we only
     % have marker data. 
     if ~isempty(speed)
-        markers = compensateSpeedMarkers(markers, speed, direction);
+        markers = compensateSpeedMarkers(markers, speed, 'x');
     end
     
     % Segmentation if requested.
