@@ -10,8 +10,7 @@ function status = batchProcessData(settings)
         case 'Motion'
             func = @processMotionData;
             dirs = {settings.markers, settings.grfs};
-            args = {settings.marker_rotations, settings.marker_left_handed, ...
-                settings.grf_rotations, settings.grf_left_handed, ...
+            args = {settings.marker_system, settings.grf_system, ...
                 settings.time_delay};
             folder_names = {settings.marker_folder, settings.grf_folder};
         case 'Marker'
