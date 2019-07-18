@@ -10,13 +10,13 @@ function times = processGRFData(save_dir, grfs_file, system, ...
             speed_data = Data(speed);
             [grfs, speed_data] = synchronise(grfs, speed_data, 0);
             speed_data.spline(grfs.getColumn('time'));
-            speed = calculateSpeedArray(speed_data);
+            speed = calculateSpeedArray(speed_data, 1, 0.01);
         end
         grfs = compensateSpeedGRF(grfs, speed, 'x');
     end
     
     % Segmentation if necessary.
-    if nargin == 10
+    if nargin == 8
         for i=1:length(feet)
             times = segment(feet{i}, mode, cutoff, grfs, [], [], save_dir, ...
                 [], save_folder);

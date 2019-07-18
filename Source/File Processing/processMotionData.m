@@ -29,7 +29,7 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
         grfs = compensateSpeedGRF(grfs, grf_speed, 'x');
     end
     
-    if nargin == 16
+    if nargin == 13
         % Segment & save files.
         for foot = feet
             segment(foot{1}, mode, cutoff, grfs, markers, ...
