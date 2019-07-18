@@ -1,14 +1,14 @@
 function [cycles_time, cycles_frame] = segmentMarkers(side, motion_data)
-% Segment markers according to peak toe displacement in forward direction.
+% Segment markers according to an approximation of hip flexion/extension.
 %
 % This assumes that the input motion data is in the OpenSim coordinate
 % system (X forward from subject, Y up, Z to the right).    
 
     if strcmp(side, 'left')
-        upper_str = 'L_Thigh_Upper';
+        upper_str = 'L_ASIS';
         front_str = 'L_Thigh_Front';
     else
-        upper_str = 'R_Thigh_Upper';
+        upper_str = 'R_ASIS';
         front_str = 'R_Thigh_Front';
     end
     
@@ -26,24 +26,16 @@ function [cycles_time, cycles_frame] = segmentMarkers(side, motion_data)
             crossing_points = [crossing_points i];
         end
     end
-    if crossing_points(end) ~= length(angle)
-        crossing_points = [crossing_points length(angle)];
-    end
     
-    % Find the midpoint between the two largest maximum peaks between each 
-    % crossing point.
+    % Find the largest peak between each pair of crossing points,
+    % discarding the positive ones.
     indices = [];
     for i=2:length(crossing_points)
-        temp = zeros(size(angle));
+        temp = ones(size(angle))*100;
         range = crossing_points(i - 1):crossing_points(i);
         temp(range) = angle(range);
-        pks = findpeaks(temp);
-        if length(pks) > 1
-            pks(pks == max(pks)) = [];
-        end
-        if ~isempty(pks)
-            indices = [indices find(temp == max(pks))];
-        end
+        [~, idx] = min(temp);
+        indices = [indices idx];  %#ok<*AGROW>
     end
     
     % Note: motion_data must be in OpenSim coordinate system!
