@@ -1,4 +1,4 @@
-function grf_data = produceMOT(input_file, system, save_dir)
+function grf_data = produceMOT(input_file, system, inclination, save_dir)
 
 % Get the arrays of time, forces and moments.
 [time, forces, moments] = readViconTextData(input_file);
@@ -8,6 +8,9 @@ forces(:, 1:3) = convertSystem(forces(:, 1:3), system);
 forces(:, 4:6) = convertSystem(forces(:, 4:6), system);
 moments(:, 1:3) = convertSystem(moments(:, 1:3), system);
 moments(:, 4:6) = convertSystem(moments(:, 4:6), system);
+
+% Gravity compensation.
+[forces, moments] = compensateGravity(forces, moments, inclination);
 
 % Apply an initial LP filter of 6 Hz.
 [forces, moments] = lp4FilterGRFs(forces, moments, 6, 6);
@@ -37,5 +40,8 @@ data = constructGRFDataArray(forces, cop, torques);
 [~, name, ~] = fileparts(input_file);
 output_file = [save_dir filesep name '.mot'];
 grf_data = createGRFData(time, data, output_file);
+
+% Motion-base transformation.
+grf_data.rotate(0, inclination, 0);
 
 end

@@ -29,10 +29,10 @@ function status = batchProcessData(settings)
     
     if isfield(settings, 'speed')
         args = [args {settings.speed}];
-    else
-        if ~strcmp(settings.analysis, 'Static')
-            args = [args {[], []}];
-        end
+    end
+    
+    if isfield(settings, 'inclination')
+        args = [args {settings.inclination}];
     end
     
     if isfield(settings, 'mode')
