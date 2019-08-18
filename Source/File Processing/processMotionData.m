@@ -16,16 +16,20 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     % Speed compensation.
     if isa(speed, 'char')
         speed_data = Data(speed);
-        [~, speed_data] = ...
+        [~, marker_speed] = ...
             synchronise(marker_data, speed_data, time_delay);
-        grf_speed = copy(speed_data);
-        speed_data.spline(markers.getColumn('time'));
-        grf_speed.spline(grfs.getColumn('time'));
-        speed = calculateSpeedArray(speed_data, 1, 0.01);
+        grf_speed = copy(marker_speed);
+        marker_speed.spline(markers.getTimesteps());
+        grf_speed.spline(grfs.getTimesteps());
+        marker_speed = calculateSpeedArray(marker_speed, 1, 0.01);
         grf_speed = calculateSpeedArray(grf_speed, 1, 0.01);
+        markers = compensateSpeedMarkers(markers, marker_speed, 'x');
+        grfs = compensateSpeedGRF(grfs, grf_speed, 'x');
+    elseif speed ~= 0
+        markers = compensateSpeedMarkers(markers, speed, 'x');
+        grfs = compensateSpeedGRF(grfs, speed, 'x');
     end
-    markers = compensateSpeedMarkers(markers, speed, 'x');
-    grfs = compensateSpeedGRF(grfs, grf_speed, 'x');
+    
     
     if nargin == 14
         % Segment & save files.
