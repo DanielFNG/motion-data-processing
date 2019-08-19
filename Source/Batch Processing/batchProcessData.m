@@ -43,12 +43,14 @@ function status = batchProcessData(settings)
     n_dirs = length(dirs);
     switch n_dirs
         case 1
-            [~, files] = getFilePaths(dirs{1}, ext);
+            [n_files, files] = getFilePaths(dirs{1}, ext);
         case 2
             [n_markers, markers] = getFilePaths(dirs{1}, '.trc');
             [n_grfs, grfs] = getFilePaths(dirs{2}, '.txt');
             if ~(n_markers == n_grfs)
                 error('Unequal number of markers and grf files.');
+            else
+                n_files = n_markers;
             end
             files = [markers; grfs];
     end
@@ -56,9 +58,11 @@ function status = batchProcessData(settings)
     % Reconstruct file list to take in to account the possibility of a
     % subset of files being specified. Note that settings.FileSubset can
     % be 1:n_files, in which case files is unchanged. 
-    file_list = settings.subset;
-    files = files(:, file_list);
-    n_files = size(files, 2);
+    if isfield(settings, 'subset')
+        file_list = settings.subset;
+        files = files(:, file_list);
+        n_files = size(files, 2);
+    end
     
     % Get the paths to the speed files if necessary. 
     if isfield(settings, 'speed') && isa(settings.speed, 'char')
