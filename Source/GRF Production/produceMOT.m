@@ -4,8 +4,8 @@ function grf_data = produceMOT(input_file, system, inclination, save_dir)
 [time, forces, moments] = readViconTextData(input_file);
 
 % Convert forces and moments to OpenSim co-ordinates.
-forces(:, 1:3) = convertSystem(forces(:, 1:3), system);
-forces(:, 4:6) = convertSystem(forces(:, 4:6), system);
+forces(:, 1:3) = convertSystem(forces(:, 1:3), system);  % Left
+forces(:, 4:6) = convertSystem(forces(:, 4:6), system);  % Right
 moments(:, 1:3) = convertSystem(moments(:, 1:3), system);
 moments(:, 4:6) = convertSystem(moments(:, 4:6), system);
 

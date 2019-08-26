@@ -1,5 +1,6 @@
 function processMotionData(marker_save_dir, grf_save_dir, ...
-    marker_file, grf_file, marker_system, grf_system, time_delay, ...
+    marker_file, grf_file, marker_system, grf_system, ...
+    x_offset, y_offset, z_offset, time_delay, ...
     speed, inclination, feet, mode, cutoff, marker_folder, grf_folder)
 
     % Produce data objects.
@@ -12,6 +13,9 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     
     % Synchronise. 
     [markers, grfs] = synchronise(marker_data, grf_data, time_delay);
+    
+    % Coordinate system offset compensation.
+    marker_data = applyOffsets(marker_data, x_offset, y_offset, z_offset);
     
     % Speed compensation.
     if isa(speed, 'char')
@@ -30,8 +34,7 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
         grfs = compensateSpeedGRF(grfs, speed, 'x');
     end
     
-    
-    if nargin == 14
+    if nargin == 17
         % Segment & save files.
         for foot = feet
             segment(foot{1}, mode, cutoff, grfs, markers, ...
