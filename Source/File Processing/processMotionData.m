@@ -1,7 +1,8 @@
 function processMotionData(marker_save_dir, grf_save_dir, ...
     marker_file, grf_file, marker_system, grf_system, ...
     x_offset, y_offset, z_offset, time_delay, ...
-    speed, inclination, feet, mode, cutoff, marker_folder, grf_folder)
+    speed, inclination, assistance_params, ...
+    feet, mode, cutoff, marker_folder, grf_folder)
 
     % Produce data objects.
     marker_data = Data(marker_file);
@@ -34,7 +35,13 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
         grfs = compensateSpeedGRF(grfs, speed, 'x');
     end
     
-    if nargin == 17
+    % Add assistive torques as external forces/moments.
+    if ~isempty(assistance_params)
+        [grfs, markers] = applyParameterisedAssistance(...
+            grfs, assistance_params, cutoff, markers);
+    end
+    
+    if nargin == 18
         % Segment & save files.
         for foot = feet
             segment(foot{1}, mode, cutoff, grfs, markers, ...

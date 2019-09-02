@@ -1,5 +1,5 @@
 function times = processGRFData(save_dir, grfs_file, system, ...
-    speed, inclination, feet, mode, cutoff, save_folder)
+    speed, inclination, assistance_params, feet, mode, cutoff, save_folder)
 
     % Load grfs data.
     grfs = produceMOT(grfs_file, system, inclination, save_dir);
@@ -13,8 +13,13 @@ function times = processGRFData(save_dir, grfs_file, system, ...
     end
     grfs = compensateSpeedGRF(grfs, speed, 'x');
     
+    % Add assistive torques as external forces/moments.
+    if ~isempty(assistance_params)
+        grfs = applyParameterisedAssistance(grfs, assistance_params, cutoff);
+    end
+    
     % Segmentation if necessary.
-    if nargin == 9
+    if nargin == 10
         for i=1:length(feet)
             times = segment(feet{i}, mode, cutoff, grfs, [], [], save_dir, ...
                 [], save_folder);
