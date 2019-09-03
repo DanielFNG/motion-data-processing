@@ -31,7 +31,7 @@ function [grfs, markers] = ...
                 n_frames(cycle) = n_frames(cycle) + ...
                     length(frames{side}{inner_cycle});
             end
-            n_frames(cycle) = n_frames(cycle)/avg_window;
+            n_frames(cycle) = round(n_frames(cycle)/avg_window);
             
             % Next, generate the torque pattern that would be applied by
             % the given number of parameters.
@@ -40,22 +40,20 @@ function [grfs, markers] = ...
             
             % Compare the predicted and true number of frames in the cycle.
             disparity = length(frames{side}{cycle}) - n_frames(cycle);
-            switch disparity
+            if disparity > 0
                 % If the gait was longer than expected, loop the profile.
-                case disparity > 0
-                    apo_torques(...
-                        frames{side}{cycle}(1:end - disparity)) = profile;
-                    apo_torques(...
-                        frames{side}{cycle}(end - disparity + 1:end)) = ...
-                        profile(1:disparity);
-                % If the gait was as expected, it's a perfect match.
-                case disparity == 0
-                    apo_torques(frames{side}{cycle}) = profile;
-                % If the gait was shorter than expected, simply complete as
-                % much of the profile as you can.
-                case disparity < 0
-                    apo_torques(frames{side}{cycle}) = ...
-                        profile(1:end - disparity);
+                apo_torques(...
+                    frames{side}{cycle}(1:end - disparity), side) = profile;
+                apo_torques(frames{side}{cycle}...
+                    (end - disparity + 1:end), side) = profile(1:disparity);
+            % If the gait was as expected, it's a perfect match.
+            elseif disparity == 0
+                apo_torques(frames{side}{cycle}, side) = profile;
+            % If the gait was shorter than expected, simply complete as
+            % much of the profile as you can.
+            else
+                apo_torques(frames{side}{cycle}, side) = ...
+                    profile(1:end + disparity);  % + since it's negative
             end
         end
     end
@@ -67,18 +65,18 @@ function [grfs, markers] = ...
     
     % Slice the GRF data to the point after which both the left & right APO
     % torques are well defined.
-    good_frames = apo_torques(:, left_index) ~= init & ...
-        apo_torques(:, right_index) ~= init;
-    grfs = grfs.slice(good_frames);
+    good_frames = find(apo_torques(:, left_index) ~= init & ...
+        apo_torques(:, right_index) ~= init);
+    grfs = grfs.slice(good_frames); %#ok<*FNDSB>
     
     % If requested, slice the marker data.
     if nargin == 4
         grf_times = grfs.getTimesteps();
         marker_times = markers.getTimesteps();
-        marker_frames = marker_times(marker_times >= grf_times(1) & ...
-            marker_times <= grf_times(end));
-        grf_frames = grf_times(grf_times >= marker_times(1) & ...
-            grf_times <= marker_times(end));
+        marker_frames = find(marker_times(marker_times >= grf_times(1) & ...
+            marker_times <= grf_times(end)));
+        grf_frames = find(grf_times(grf_times >= marker_times(1) & ...
+            grf_times <= marker_times(end)));
         grfs.slice(grf_frames);
         markers.slice(marker_frames);
     end

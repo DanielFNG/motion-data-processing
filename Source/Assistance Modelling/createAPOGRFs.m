@@ -15,7 +15,7 @@ function grf = createAPOGRFs(grf, left_torque, right_torque)
         '1_apo_group_torque_x','1_apo_group_torque_y','1_apo_group_torque_z'};
 
     % Form the values.
-    values = zeros(n_timesteps,length(labels));
+    values = zeros(grf.NFrames, length(labels));
     values(1:end,1:8) = 0;
     values(1:end,9) = right_torque;
     values(1:end,10:17) = 0;
