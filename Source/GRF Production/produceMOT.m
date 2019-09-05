@@ -14,20 +14,15 @@ cop(:, 4:6) = convertSystem(cop(:, 4:6), system);
 % Gravity compensation.
 [forces, moments] = compensateGravity(forces, moments, inclination);
 
-[left_indices, right_indices, forces, moments] = ...
-    thresholdGRFs(forces, moments, 30);
+% Apply initial low pass filters.
+[forces, moments] = lp4FilterGRFs(forces, moments, 10, 10);
 
-% Apply an initial LP filter of 6 Hz.
-[forces, moments] = lp4FilterGRFs(...
-    left_indices, right_indices, forces, moments, 10, 10);
-
-% Re-threshold at a lower cutoff.
-[cop_left, cop_right, forces, moments] = ...
-    thresholdGRFs(forces, moments, 5);
+% Threshold the force data.
+[left_indices, right_indices] = findThresholdIndices(forces, 40, 2);
+[forces, moments] = thresholdGRFs(forces, moments, left_indices, right_indices);
 
 % Process the raw cop data.
-cop = processRawCOP(...
-    cop, left_indices, right_indices, cop_left, cop_right);
+cop = processRawCOP(cop, left_indices, right_indices);
 
 % Temporary hard coding weird thing...
 cop(:, 1:6) = -cop(:, 1:6);

@@ -40,6 +40,7 @@ function [grfs, markers] = ...
             
             % Compare the predicted and true number of frames in the cycle.
             disparity = length(frames{side}{cycle}) - n_frames(cycle);
+            
             if disparity > 0
                 % If the gait was longer than expected, loop the profile.
                 apo_torques(...
