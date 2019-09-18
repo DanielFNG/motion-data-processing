@@ -20,10 +20,10 @@ function [grfs, markers] = ...
         % Get the number of cycles and create an array to store the number
         % of frames in each cycle.
         n_cycles = length(frames{side});
-        n_frames = zeros(1, n_cycles);   
+        n_frames = zeros(1, n_cycles + 1);   
         
         % Loop over the cycles, starting from the avg_window + 1 cycle.
-        for cycle = avg_window + 1:n_cycles
+        for cycle = avg_window + 1:n_cycles + 1
             
             % Compute the number of frames predicted to be in that cycle -
             % from the mean of the previous avg_window cycles.
@@ -39,21 +39,26 @@ function [grfs, markers] = ...
                 params.force, params.rise, params.peak, params.fall);
             
             % Compare the predicted and true number of frames in the cycle.
-            disparity = length(frames{side}{cycle}) - n_frames(cycle);
+            if cycle == n_cycles + 1
+                current_frames = frames{side}{cycle - 1}(end) + 1:grfs.NFrames;
+            else
+                current_frames = frames{side}{cycle};
+            end
+            disparity = length(current_frames) - n_frames(cycle);
             
             if disparity > 0
                 % If the gait was longer than expected, loop the profile.
                 apo_torques(...
-                    frames{side}{cycle}(1:end - disparity), side) = profile;
-                apo_torques(frames{side}{cycle}...
+                    current_frames(1:end - disparity), side) = profile;
+                apo_torques(current_frames...
                     (end - disparity + 1:end), side) = profile(1:disparity);
             % If the gait was as expected, it's a perfect match.
             elseif disparity == 0
-                apo_torques(frames{side}{cycle}, side) = profile;
+                apo_torques(current_frames, side) = profile;
             % If the gait was shorter than expected, simply complete as
             % much of the profile as you can.
             else
-                apo_torques(frames{side}{cycle}, side) = ...
+                apo_torques(current_frames, side) = ...
                     profile(1:end + disparity);  % + since it's negative
             end
         end
@@ -74,12 +79,12 @@ function [grfs, markers] = ...
     if nargin == 4
         grf_times = grfs.getTimesteps();
         marker_times = markers.getTimesteps();
-        marker_frames = find(marker_times(marker_times >= grf_times(1) & ...
-            marker_times <= grf_times(end)));
-        grf_frames = find(grf_times(grf_times >= marker_times(1) & ...
-            grf_times <= marker_times(end)));
-        grfs.slice(grf_frames);
-        markers.slice(marker_frames);
+        marker_frames = find(marker_times >= grf_times(1) & ...
+            marker_times <= grf_times(end));
+        grf_frames = find(grf_times >= marker_times(marker_frames(1)) & ...
+            grf_times <= marker_times(marker_frames(end)));
+        grfs = grfs.slice(grf_frames);
+        markers = markers.slice(marker_frames);
     end
     
 end
