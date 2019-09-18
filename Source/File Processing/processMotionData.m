@@ -5,24 +5,23 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     feet, mode, cutoff, marker_folder, grf_folder)
 
     % Produce data objects.
-    marker_data = Data(marker_file);
-    marker_data.convert(marker_system);
-    grf_data = produceMOT(grf_file, grf_system, inclination, grf_save_dir);
+    markers = Data(marker_file);
+    markers.convert(marker_system);
+    grfs = produceMOT(grf_file, grf_system, inclination, grf_save_dir);
     
     % Convert marker units to 'm' if they're not in that form already.
-    marker_data.convertUnits('m');
+    markers.convertUnits('m');
     
     % Synchronise. 
-    [markers, grfs] = synchronise(marker_data, grf_data, time_delay);
+    [markers, grfs] = synchronise(markers, grfs, time_delay);
     
     % Coordinate system offset compensation.
-    marker_data = applyOffsets(marker_data, x_offset, y_offset, z_offset);
+    markers = applyOffsets(markers, x_offset, y_offset, z_offset);
     
     % Speed compensation.
     if isa(speed, 'char')
         speed_data = Data(speed);
-        [~, marker_speed] = ...
-            synchronise(marker_data, speed_data, time_delay);
+        [~, marker_speed] = synchronise(markers, speed_data, time_delay);
         grf_speed = copy(marker_speed);
         marker_speed.spline(markers.getTimesteps());
         grf_speed.spline(grfs.getTimesteps());
