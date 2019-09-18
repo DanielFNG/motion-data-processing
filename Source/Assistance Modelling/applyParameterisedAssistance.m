@@ -64,6 +64,23 @@ function [grfs, markers] = ...
         end
     end
     
+    % Identify the frames for which the left & right APO torques are well
+    % defined.
+    good_frames = find(apo_torques(:, left_index) ~= init & ...
+        apo_torques(:, right_index) ~= init);
+    
+    % Add an initial frame - to allow for later segmentation to work if
+    % necessary.
+    one_frame = good_frames(1) - 1;
+    good_frames = [one_frame; good_frames];
+    
+    % Sort out the APO torques at this extra frame. 
+    for side = 1:n_sides
+        if apo_torques(one_frame, side) == init
+            apo_torques(one_frame, side) = 0;
+        end
+    end
+    
     % Create a new GRF object which has the correct APO forces appended to
     % it.
     grfs = createAPOGRFs(grfs, ...
@@ -71,8 +88,6 @@ function [grfs, markers] = ...
     
     % Slice the GRF data to the point after which both the left & right APO
     % torques are well defined.
-    good_frames = find(apo_torques(:, left_index) ~= init & ...
-        apo_torques(:, right_index) ~= init);
     grfs = grfs.slice(good_frames); %#ok<*FNDSB>
     
     % If requested, slice the marker data.
@@ -81,9 +96,6 @@ function [grfs, markers] = ...
         marker_times = markers.getTimesteps();
         marker_frames = find(marker_times >= grf_times(1) & ...
             marker_times <= grf_times(end));
-        grf_frames = find(grf_times >= marker_times(marker_frames(1)) & ...
-            grf_times <= marker_times(marker_frames(end)));
-        grfs = grfs.slice(grf_frames);
         markers = markers.slice(marker_frames);
     end
     
