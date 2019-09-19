@@ -49,6 +49,18 @@ save_folders = {grf_save_folder kin_save_folder};
 
 %% Identify the correct segmentation times
 [segmentation_times, segmentation_frames] = func(args{:}, motion_data);
+
+%% Outlier removal
+% This gets rid of gait cycles which are much shorter or longer than the
+% mean, as these are assumed to be mistakes resulting from stepping on the
+% wrong belt for example. Note this is problematic if we ever look at
+% non-steady state walking - I'm going to make a note of this on GitHub. 
+cycle_lengths = cellfun(@length, segmentation_times);
+good_cycles = ~isoutlier(cycle_lengths);
+segmentation_times = segmentation_times(good_cycles);
+segmentation_frames = segmentation_frames(good_cycles);
+
+%% Handle motion input data
 if length(combined_motion_data(~cellfun('isempty', combined_motion_data))) == 2
     [marker_frames, grf_frames] = ...
         adjustSegmentationTimes(segmentation_times, grfs, kinematics);
