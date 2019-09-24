@@ -1,9 +1,15 @@
 function [left, right] = findThresholdIndices(forces, upper, lower)
 
 for side = [2, 5]
-    vy = forces(:, side); 
-    i = find(vy > lower, 1, 'first') + 1;
-    indices = 1:(i - 2);
+    vy = forces(:, side);
+    j = find(vy > upper, 1, 'first');
+    i = find(vy(1:j) < lower, 1, 'last') + 1;
+    if isempty(i)  % There's no data to be thresholded from the start
+        i = 2;
+        indices = [];
+    else  % There is data to be thresholded from the start
+        indices = 1:(i - 1);
+    end
     while i < length(vy)
         if vy(i - 1) > upper && vy(i) <= upper
             start = find(vy(i:end) < lower, 1, 'first');
