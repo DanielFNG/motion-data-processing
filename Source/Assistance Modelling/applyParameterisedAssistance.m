@@ -6,7 +6,7 @@ function [grfs, markers] = ...
     left_index = 1;
     right_index = 2;
     init = 1000;
-    avg_window = 3;
+    avg_window = 3;  % How many gait cycles we use for averaging gait freq
     
     % Setup some arrays. 
     n_sides = length(sides);
@@ -35,8 +35,9 @@ function [grfs, markers] = ...
             
             % Next, generate the torque pattern that would be applied by
             % the given number of parameters.
-            profile = generateAssistiveProfile(n_frames(cycle), ...
-                params.force, params.rise, params.peak, params.fall);
+            profile = generateMixedBimodalAssistiveProfile(...
+                n_frames(cycle), params.force, params.pext, ...
+                params.rise, params.pflex, params.fall);
             
             % Compare the predicted and true number of frames in the cycle.
             if cycle == n_cycles + 1
