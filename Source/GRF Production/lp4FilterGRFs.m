@@ -7,6 +7,8 @@ function [forces, moments] = lp4FilterGRFs(forces, moments, force_freq, ...
     if nargin < 6
         left_indices = zeros(1, size(forces, 1));
         right_indices = left_indices;
+    else
+        
     end
 
     forces(~left_indices, 1:3) = ZeroLagButtFiltfilt(...

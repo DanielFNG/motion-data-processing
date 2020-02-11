@@ -22,7 +22,8 @@ cop(:, 4:6) = convertSystem(cop(:, 4:6), system);
 [forces, moments] = thresholdGRFs(forces, moments, left_indices, right_indices);
 
 % Process the raw cop data.
-cop = processRawCOP(cop, left_indices, right_indices);
+cop1 = processRawCOP(cop, left_indices, right_indices);
+cop2 = calculateCOP(forces, moments, left_indices, right_indices);
 
 % Temporary hard coding weird thing...
 cop(:, 1:6) = -cop(:, 1:6);
