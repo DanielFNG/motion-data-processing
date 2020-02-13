@@ -14,19 +14,34 @@ cop(:, 4:6) = convertSystem(cop(:, 4:6), system);
 % Gravity compensation.
 [forces, moments] = compensateGravity(forces, moments, inclination);
 
+% Initial threshold on the vertical force components. 
+forces(forces(:, 2) < 20, 1:3) = 0;
+forces(forces(:, 5) < 20, 4:6) = 0;
+
 % Apply initial low pass filters.
 [forces, moments] = lp4FilterGRFs(forces, moments, 10, 10);
 
+% Take absolute magnitude of vertical force components to remove negs.
+forces(forces(:, 2) < 0, 2) = -forces(forces(:, 2) < 0, 2);
+forces(forces(:, 5) < 0, 5) = -forces(forces(:, 5) < 0, 5);
+
+% Apply more low pass filtering.
+[forces, moments] = lp4FilterGRFs(forces, moments, 10, 10);
+
 % Threshold the force data.
-[left_indices, right_indices] = findThresholdIndices(forces, 40, 2);
-[forces, moments] = thresholdGRFs(forces, moments, left_indices, right_indices);
+[left_indices, right_indices] = findThresholdIndices(forces, 40, 20);
+[forces, moments] = thresholdGRFs(...
+    forces, moments, left_indices, right_indices);
+
+% Smoothing for boundaries at low force values ( < 5-10N)
+%[forces, moments] = smoothGRFs(forces, moments);
 
 % Process the raw cop data.
 cop1 = processRawCOP(cop, left_indices, right_indices);
-cop2 = calculateCOP(forces, moments, left_indices, right_indices);
+cop = calculateCOP(forces, moments, left_indices, right_indices);
 
 % Temporary hard coding weird thing...
-cop(:, 1:6) = -cop(:, 1:6);
+cop1(:, 1:6) = -cop1(:, 1:6);
 
 % Calculate torques from free moments. 
 torques = calcTorques(forces, moments, cop);
