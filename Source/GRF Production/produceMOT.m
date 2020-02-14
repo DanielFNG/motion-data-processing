@@ -33,15 +33,15 @@ forces(forces(:, 5) < 0, 5) = -forces(forces(:, 5) < 0, 5);
 [forces, moments] = thresholdGRFs(...
     forces, moments, left_indices, right_indices);
 
+% Process the raw cop data.
+cop = processRawCOP(cop, left_indices, right_indices);
+[cop_left, cop_right] = findThresholdIndices(forces, 450, 400);
+cop = adjustCOP(time, cop, left_indices, cop_left, right_indices, cop_right);
+cop(:, 1:6) = -cop(:, 1:6);  % Temporary hard coding weird thing...
+
+% Smoothing step. 
 % Smoothing for boundaries at low force values ( < 5-10N)
 %[forces, moments] = smoothGRFs(forces, moments);
-
-% Process the raw cop data.
-cop1 = processRawCOP(cop, left_indices, right_indices);
-cop = calculateCOP(forces, moments, left_indices, right_indices);
-
-% Temporary hard coding weird thing...
-cop1(:, 1:6) = -cop1(:, 1:6);
 
 % Calculate torques from free moments. 
 torques = calcTorques(forces, moments, cop);
