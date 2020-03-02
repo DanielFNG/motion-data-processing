@@ -1,4 +1,4 @@
-function cop = adjustCOP(time, cop, grf_l, cop_l, grf_r, cop_r)
+function cop = adjustCOP(cop, grf_l, cop_l, grf_r, cop_r)
 
     full = 1:length(cop(:, 1));
     grfs = {grf_l, grf_r};
@@ -9,20 +9,24 @@ function cop = adjustCOP(time, cop, grf_l, cop_l, grf_r, cop_r)
         trust = setdiff(full, cops{side});
         
         % Segmentation.
-        jumps = find(diff(combined) ~= 1);
-        if combined(1) == 1
-            jumps = [0 jumps]; %#ok<*AGROW>
-        end
-        jumps = [jumps combined(end)];
+        jumps = [0, find(diff(combined) ~= 1), length(combined)];
         
-        for d = [1, 3, 4, 6]
+        switch side
+            case 1
+                indices = [1, 3];
+            case 2 
+                indices = [4, 6];
+        end
+        
+        for d = indices
             for cycle = 1:(length(jumps) - 1)
-                combined_cycle = jumps(cycle) + 1:jumps(cycle + 1);
+                combined_cycle = combined(jumps(cycle) + 1:jumps(cycle + 1));
                 trusted_cycle = intersect(combined_cycle, trust);
-                cop(combined_cycle, d) = interp1(...
-                    time(trusted_cycle), ...
-                    cop(trusted_cycle, d), ...
-                    time(combined_cycle), 'linear', 'extrap');
+                cop(combined_cycle(1):trusted_cycle(1), d) = ...
+                    cop(trusted_cycle(1), d);
+                cop(trusted_cycle(end):combined_cycle(end), d) = ...
+                    cop(trusted_cycle(end), d);
+                cop(combined_cycle(end) + 1:jumps(cycle + 1), d) = 0;
             end
         end
     end
