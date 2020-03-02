@@ -1,4 +1,5 @@
 function grf_data = createGRFData(time, data, output_file)
+% Constructs header & column labels to combine with data & produce MOT file
 
 initial_time = time(1);
 header{1} = sprintf('name %s', output_file);

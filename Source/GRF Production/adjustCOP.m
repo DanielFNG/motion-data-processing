@@ -1,4 +1,18 @@
 function cop = adjustCOP(cop, grf_l, cop_l, grf_r, cop_r)
+% This function adjust CoP data collected at low force values due to the
+% inherent noise and inaccuracy of the signal in these conditions. 
+%
+% Input variables:
+%                   - cop (6D CoP data)
+%                   - grf_l (indices at which left foot is in stance)
+%                   - grf_r (indices at which right foot is in stance)
+%                   - cop_l (indices at which left foot data is trusted)
+%                   - cop_r (indices at which right foot data is trusted)
+%
+% Output:
+%                   - modified cop data, where we set the cop in the
+%                     untrusted region to be equal to the last recorded
+%                     trusted value
 
     full = 1:length(cop(:, 1));
     grfs = {grf_l, grf_r};

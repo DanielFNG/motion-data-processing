@@ -1,4 +1,5 @@
 function grf_data = produceMOT(input_file, system, inclination, save_dir)
+% Read & process raw force data from Vicon to produce an OpenSim MOT file. 
 
 % Fixed parameters. 
 force_freq = 10;  % Force filtering frequency

@@ -1,4 +1,5 @@
 function torques = calculateTorques(forces, moments, cop)
+% Compute torque data given input forces, moments & CoP data. 
 
 torques = zeros(size(forces,1), 6);
 
