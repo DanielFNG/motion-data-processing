@@ -1,4 +1,4 @@
-function torques = calcTorques(forces, moments, cop)
+function torques = calculateTorques(forces, moments, cop)
 
 torques = zeros(size(forces,1), 6);
 
