@@ -34,7 +34,16 @@ moments(right_indices, 4:6) = 0;
 cop = calculateCOP(forces, moments, left_indices, right_indices);
 cop_left = find(forces(:, 2) < trust);
 cop_right = find(forces(:, 5) < trust);
-cop = adjustCOP(cop, left_indices, cop_left, right_indices, cop_right);
+[cop, discard, from] = adjustCOP(...
+    cop, left_indices, cop_left, right_indices, cop_right);
+
+% Discard unusable data if necessary.
+if discard
+    time(from:end) = [];
+    forces(from:end, :) = [];
+    moments(from:end, :) = [];
+    cop(from:end, :) = [];
+end
 
 % Calculate torques from free moments. 
 torques = calculateTorques(forces, moments, cop);
