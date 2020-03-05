@@ -1,5 +1,6 @@
 function [forces, moments] = lp4FilterGRFs(forces, moments, force_freq, ...
     moments_freq, left_indices, right_indices)
+% Filter force & moment data using a low pass 4th order Butterworth filter. 
 
     fp_frame_rate = 1000;
     dt = 1/fp_frame_rate;
@@ -7,6 +8,8 @@ function [forces, moments] = lp4FilterGRFs(forces, moments, force_freq, ...
     if nargin < 6
         left_indices = zeros(1, size(forces, 1));
         right_indices = left_indices;
+    else
+        
     end
 
     forces(~left_indices, 1:3) = ZeroLagButtFiltfilt(...
