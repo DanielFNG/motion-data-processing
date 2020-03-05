@@ -7,7 +7,7 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     % Produce data objects.
     markers = Data(marker_file);
     markers.convert(marker_system);
-    grfs = produceMOT(grf_file, grf_system, inclination, grf_save_dir);
+    grfs = produceMOT(grf_file, grf_system, inclination);
     
     % Convert marker units to 'm' if they're not in that form already.
     markers.convertUnits('m');
