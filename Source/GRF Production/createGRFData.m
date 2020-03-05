@@ -1,8 +1,8 @@
-function grf_data = createGRFData(time, data, output_file)
+function grf_data = createGRFData(time, data)
 % Constructs header & column labels to combine with data & produce MOT file
 
 initial_time = time(1);
-header{1} = sprintf('name %s', output_file);
+header{1} = sprintf('name not saved');
 header{2} = sprintf('datacolumns %i', size(data, 2) + 1);
 header{3} = sprintf('datarows %i', size(data, 1));
 header{4} = sprintf('range %.2f %.2f', 0.0, time(end) - initial_time);

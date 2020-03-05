@@ -1,10 +1,10 @@
-function grf_data = produceMOT(input_file, system, inclination, save_dir)
+function grf_data = produceMOT(input_file, system, inclination)
 % Read & process raw force data from Vicon to produce an OpenSim MOT file. 
 
 % Fixed parameters. 
-force_freq = 10;  % Force filtering frequency
-moment_freq = 10;  % Moment filtering frequency
-lower = 2;  % Lower force threshold 
+force_freq = 6;  % Force filtering frequency
+moment_freq = 6;  % Moment filtering frequency
+lower = 0;  % Lower force threshold 
 upper = 40;  % Upper force threshold (see findThresholdIndices)
 trust = 100;  % CoP trust region 
 
@@ -42,10 +42,8 @@ torques = calculateTorques(forces, moments, cop);
 % Construct overall data array. 
 data = constructGRFDataArray(forces, cop, torques);
 
-% Write .mot file suitable for OpenSim usage. 
-[~, name, ~] = fileparts(input_file);
-output_file = [save_dir filesep name '.mot'];
-grf_data = createGRFData(time, data, output_file);
+% Write .mot file suitable for OpenSim usage.
+grf_data = createGRFData(time, data);
 
 % Motion-base transformation.
 grf_data.rotate(0, inclination, 0);

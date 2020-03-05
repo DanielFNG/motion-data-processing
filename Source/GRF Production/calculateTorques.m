@@ -10,4 +10,5 @@ for i=0:1
         (cop(:, 1 + index).*forces(:, 3 + index));
 end
 
+
 end
