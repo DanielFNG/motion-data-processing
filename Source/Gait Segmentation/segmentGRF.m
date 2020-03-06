@@ -1,4 +1,4 @@
-function [cycles_time, cycles_frame] = segmentGRF(side, cutoff, motion_data)
+function [cycles_time, cycles_frame] = segmentGRF(side, motion_data)
 
     minimum_increase = 5;
 
@@ -9,7 +9,7 @@ function [cycles_time, cycles_frame] = segmentGRF(side, cutoff, motion_data)
     end
     
     timesteps = motion_data.getColumn('time');
-    indices = find(motion_data.getColumn(str) > cutoff);
+    indices = find(motion_data.getColumn(str) > 0);
     cycles_time = {};
     cycles_frame = {};
     k = 1;
