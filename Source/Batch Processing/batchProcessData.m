@@ -19,8 +19,7 @@ function status = batchProcessData(settings)
             func = @processMarkerData;
             dirs = {settings.markers};
             ext = '.trc';
-            args = {settings.marker_system, settings.speed, ...
-                settings.inclination};
+            args = {settings.marker_system, settings.speed};
             folder_names = {settings.marker_folder};
         case 'GRF'
             func = @processGRFData;
