@@ -19,8 +19,7 @@ function status = batchProcessData(settings)
             func = @processMarkerData;
             dirs = {settings.markers};
             ext = '.trc';
-            args = {settings.marker_system, settings.speed, ...
-                settings.inclination};
+            args = {settings.marker_system, settings.speed};
             folder_names = {settings.marker_folder};
         case 'GRF'
             func = @processGRFData;
@@ -31,9 +30,13 @@ function status = batchProcessData(settings)
             folder_names = {settings.grf_folder};
     end
     
-    if isfield(settings, 'mode')
-        args = [args {settings.feet}, settings.mode, settings.cutoff, ...
-            folder_names];
+    if isfield(settings, 'feet')
+        switch settings.analysis
+            case 'Motion'
+                args = [args {settings.feet}, settings.mode, folder_names];
+            otherwise
+                args = [args {settings.feet}, folder_names];
+        end
     end
     
     n_dirs = length(dirs);
@@ -69,7 +72,7 @@ function status = batchProcessData(settings)
     % Create save directories.
     paths = cell(n_dirs, n_files);
     for i=1:n_dirs
-        if ~isfield(settings, 'mode')
+        if ~isfield(settings, 'feet')
             paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
         else
             for j=1:n_files
@@ -85,7 +88,7 @@ function status = batchProcessData(settings)
         try
             % Make the paths if they don't exist - but only if not using
             % segment.
-            if ~isfield(settings, 'mode')
+            if ~isfield(settings, 'feet')
                 for j=1:n_dirs
                     if ~exist(paths{j, i}, 'dir')
                         mkdir(paths{j, i});

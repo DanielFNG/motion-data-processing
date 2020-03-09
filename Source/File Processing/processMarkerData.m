@@ -1,5 +1,5 @@
 function processMarkerData(save_dir, marker_file, system, speed, ...
-    feet, mode, cutoff, save_folder)
+    feet, save_folder)
 
     % Load marker data.
     markers = Data(marker_file);
@@ -23,9 +23,9 @@ function processMarkerData(save_dir, marker_file, system, speed, ...
     end
     
     % Segmentation if requested.
-    if nargin == 8
+    if nargin == 6
         for i=1:length(feet)
-            segment(feet{i}, mode, cutoff, [], markers, save_dir, [], ...
+            segment(feet{i}, 'toe-peak', [], markers, save_dir, [], ...
                 save_folder, []);
         end
     else

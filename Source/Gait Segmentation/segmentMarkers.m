@@ -1,6 +1,8 @@
 function [cycles_time, cycles_frame] = segmentMarkers(side, motion_data)
 % Segment markers according to an approximation of hip flexion/extension.
 %
+% Segments according to the point of maximum EXTENSION of the chosen side.
+%
 % This assumes that the input motion data is in the OpenSim coordinate
 % system (X forward from subject, Y up, Z to the right).    
 

@@ -1,5 +1,4 @@
-function [grfs, markers] = ...
-    applyParameterisedAssistance(grfs, params, cutoff, markers)
+function [grfs, markers] = applyParameterisedAssistance(grfs, params, markers)
 
     % Parameters. 
     sides = {'left', 'right'};
@@ -15,7 +14,7 @@ function [grfs, markers] = ...
     
     for side = 1:n_sides
         % Get the indices corresponding to each gait cycle.
-        [~, frames{side}] = segmentGRF(sides{side}, cutoff, grfs);
+        [~, frames{side}] = segmentGRF(sides{side}, grfs);
         
         % Get the number of cycles and create an array to store the number
         % of frames in each cycle.
@@ -92,7 +91,7 @@ function [grfs, markers] = ...
     grfs = grfs.slice(good_frames); %#ok<*FNDSB>
     
     % If requested, slice the marker data.
-    if nargin == 4
+    if nargin == 3
         grf_times = grfs.getTimesteps();
         marker_times = markers.getTimesteps();
         marker_frames = find(marker_times >= grf_times(1) & ...

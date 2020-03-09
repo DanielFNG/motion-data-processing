@@ -1,4 +1,4 @@
-function segmentation_times = segment(side, mode, cutoff, grfs, kinematics, ...
+function segmentation_times = segment(side, mode, grfs, kinematics, ...
     kin_save_dir, grf_save_dir, kin_save_folder, grf_save_folder)
 % Segment marker and grf data. 
 %   GRFS is a grf Data object to be segmented.
@@ -13,15 +13,8 @@ function segmentation_times = segment(side, mode, cutoff, grfs, kinematics, ...
 %       kinematics files.
 %       If mode = 'toe-peak', segmentation indices are found for all
 %       kinematics files, and are applied to the corresponding grf files.
-%   CUTOFF < FY denotes the stance phase:
-%           Mode = 'toe-peak' => cutoff = []
 %   NAME is a string which is part of the resultant filenames.
-%   SAVE_DIR is the directory where output files are saved. 
-%
-%   Example usage:
-%       segment('stance', 'left', [35], 'grf.mot', [], 'fastwalk', pwd)
-%       segment('stance', 'right', [40], 'grf.mot', 'kin.mot', 'exowalk', pwd)
-%       segment('toe-peak', 'right', [], [], 'kin.mot', 'limp', pwd)
+%   SAVE_DIR is the directory where output files are saved.
 
 %% Checks
 if isempty(kinematics) && strcmp(mode, 'toe-peak')
@@ -34,11 +27,9 @@ end
 switch mode
     case 'stance'
         func = @segmentGRF;
-        args = {side, cutoff};
         motion_data = grfs;
     case 'toe-peak'
         func = @segmentMarkers;
-        args = {side};
         motion_data = kinematics;
 end
 
@@ -48,7 +39,7 @@ save_dirs = {grf_save_dir kin_save_dir};
 save_folders = {grf_save_folder kin_save_folder};
 
 %% Identify the correct segmentation times
-[segmentation_times, segmentation_frames] = func(args{:}, motion_data);
+[segmentation_times, segmentation_frames] = func(side, motion_data);
 
 %% Outlier removal
 % This gets rid of gait cycles which are much shorter or longer than the
