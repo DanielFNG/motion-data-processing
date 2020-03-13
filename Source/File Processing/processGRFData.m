@@ -28,6 +28,7 @@ function times = processGRFData(save_dir, grfs_file, system, ...
         % Write .mot file.
         [~, name, ~] = fileparts(grfs_file);
         grfs.writeToFile([save_dir filesep name]);
+        times = [];
     end
 
 end

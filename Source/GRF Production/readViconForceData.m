@@ -1,4 +1,4 @@
-function [time, forces, moments, cop] = readViconTextData(input_file)
+function [time, forces, moments, cop] = readViconForceData(input_file)
 %   Read & store forces/moments from Vicon produced .txt file.
 %   Resulting fgormat is the same as in readTreadmillTextData.
 

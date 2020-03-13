@@ -9,7 +9,7 @@ upper = 40;  % Upper force threshold (see findThresholdIndices)
 trust = 100;  % CoP trust region 
 
 % Get the arrays of time, forces and moments.
-[time, forces, moments, ~] = readViconTextData(input_file);
+[time, forces, moments, ~] = readViconForceData(input_file);
 
 % Convert quantities to OpenSim co-ordinates.
 forces(:, 1:3) = convertSystem(forces(:, 1:3), system);  % Left

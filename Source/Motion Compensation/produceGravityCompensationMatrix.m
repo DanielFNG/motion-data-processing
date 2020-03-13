@@ -14,7 +14,7 @@ function produceGravityCompensationMatrix(dir, init, inc, fin, system, savename)
 
     for i=1:n
         % Get the arrays of time, forces and moments.
-        [~, forces, moments] = readViconTextData(files{i});
+        [~, forces, moments] = readViconForceData(files{i});
 
         % Convert forces and moments to OpenSim co-ordinates.
         forces(:, 1:3) = convertSystem(forces(:, 1:3), system);
