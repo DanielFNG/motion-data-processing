@@ -2,7 +2,7 @@ function times = processGRFData(save_dir, grfs_file, system, ...
     speed, inclination, assistance_params, feet, save_folder)
 
     % Load grfs data.
-    grfs = produceMOT(grfs_file, system, inclination);
+    grfs = produceGRF(grfs_file, system, inclination);
     
     % Compensate for motion speed.
     if isa(speed, 'char')

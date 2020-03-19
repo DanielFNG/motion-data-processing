@@ -1,4 +1,4 @@
-function grf_data = produceMOT(input_file, system, inclination)
+function grf_data = produceGRF(input_file, system, inclination, params)
 % Read & process raw force data from Vicon to produce an OpenSim MOT file. 
 
 % Fixed parameters. 
@@ -52,9 +52,14 @@ torques = calculateTorques(forces, moments, cop);
 data = constructGRFDataArray(forces, cop, torques);
 
 % Write .mot file suitable for OpenSim usage.
-grf_data = createGRFData(time, data);
+grf_data = createGRFData(time, data, input_file);
 
 % Motion-base transformation.
 grf_data.rotate(0, inclination, 0);
+
+% Add assistive torques as external forces/moments.
+if nargin == 4
+    grf_data = applyParameterisedAssistance(grf_data, params);
+end
 
 end

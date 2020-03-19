@@ -1,4 +1,4 @@
-function grf_data = createGRFData(time, data)
+function grf_data = createGRFData(time, data, filename)
 % Constructs header & column labels to combine with data & produce MOT file
 
 initial_time = time(1);
@@ -18,6 +18,7 @@ labels = {'time', ...
 
 values = [time, data];
 
-grf_data = MOTData(values, header, labels);
+[~, name, ~] = fileparts(filename);
+grf_data = MOTData(values, header, labels, name);
 
 end

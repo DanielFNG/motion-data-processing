@@ -1,4 +1,4 @@
-function [grfs, markers] = applyParameterisedAssistance(grfs, params, markers)
+function grfs = applyParameterisedAssistance(grfs, params)
 
     % Parameters. 
     sides = {'left', 'right'};
@@ -89,14 +89,5 @@ function [grfs, markers] = applyParameterisedAssistance(grfs, params, markers)
     % Slice the GRF data to the point after which both the left & right APO
     % torques are well defined.
     grfs = grfs.slice(good_frames); %#ok<*FNDSB>
-    
-    % If requested, slice the marker data.
-    if nargin == 3
-        grf_times = grfs.getTimesteps();
-        marker_times = markers.getTimesteps();
-        marker_frames = find(marker_times >= grf_times(1) & ...
-            marker_times <= grf_times(end));
-        markers = markers.slice(marker_frames);
-    end
     
 end

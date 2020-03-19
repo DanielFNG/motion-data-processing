@@ -20,7 +20,7 @@ function [X, Y, Z] = getCoordinateSystemOffsets(...
     marker_data = Data(markers{1});
     marker_data.convert(marker_system);
     marker_data.convertUnits('m');
-    grf_data = produceMOT(grfs{1}, grf_system, 0);
+    grf_data = produceGRF(grfs{1}, grf_system, 0);
     
     % Get the average X/Y/Z location of the calibration weight marker.
     marker_X = mean(marker_data.getColumn([marker_name '_X']));

@@ -9,6 +9,6 @@ function emg_data = produceEMG(input_file)
     end
     
     % Write .mot file suitable for OpenSim usage.
-    emg_data = createEMGData(time, emg);
+    emg_data = createEMGData(time, emg, input_file);
 
 end

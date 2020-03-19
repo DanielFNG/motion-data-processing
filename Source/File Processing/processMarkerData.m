@@ -2,13 +2,7 @@ function processMarkerData(save_dir, marker_file, system, speed, ...
     feet, save_folder)
 
     % Load marker data.
-    markers = Data(marker_file);
-    
-    % Convert units to 'm' if they're not in that form already.
-    markers.convertUnits('m');
-    
-    % Convert co-ordinates to OpenSim default.
-    markers.convert(system);
+    markers = produceMarkers(marker_file, system);
     
     % Compensate for motion speed. Only supports fixed speed since we only
     % have marker data. 

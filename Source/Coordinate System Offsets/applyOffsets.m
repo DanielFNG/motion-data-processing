@@ -1,4 +1,4 @@
-function markers = applyOffsets(markers, x, y, z)
+function markers = applyOffsets(markers, offset)
 
     % Get the X, Y & Z labels.
     func = @(y) (@(x) strcmpi(x(end), y));
@@ -7,7 +7,7 @@ function markers = applyOffsets(markers, x, y, z)
     labels{3} = markers.Labels(cellfun(func('z'), markers.Labels));
     
     % Group the offsets.
-    offsets = [x, y, z];
+    offsets = [offset.x, offset.y, offset.z];
 
     % Step through the labels applying the offsets.
     for i=1:length(labels{1})

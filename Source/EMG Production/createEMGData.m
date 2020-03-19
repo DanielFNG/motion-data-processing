@@ -1,4 +1,4 @@
-function emg_data = createEMGData(time, data)
+function emg_data = createEMGData(time, data, filename)
 
     labels{1} = 'time';
     for i = 2:size(data, 2)
@@ -7,6 +7,7 @@ function emg_data = createEMGData(time, data)
     
     values = [time, data];
     
-    emg_data = TXTData(values, {}, labels);
+    [~, name, ~] = fileparts(filename);
+    emg_data = TXTData(values, {}, labels, name);
 
 end
