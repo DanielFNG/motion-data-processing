@@ -34,7 +34,7 @@ function produceGravityCompensationMatrix(dir, init, inc, fin, system, savename)
     end
     
     % Create the map.
-    conv = containers.Map(key_set, value_set); %#ok<NASGU>
+    conv = containers.Map(key_set, value_set); 
     
     % Save the map and gravity compensation cell array. 
     save(savename, 'M', 'conv');
