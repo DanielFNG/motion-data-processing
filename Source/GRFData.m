@@ -5,26 +5,31 @@ classdef GRFData < MotionData
        
         function obj = GRFData(input_file, system, inclination, params)
             
-            % Read in the time, force and moment arrays.
-            [time, forces, moments, ~] = readViconForceData(input_file);
-            
-            % Core GRF processing.
-            [time, forces, torques, cop] = ...
-                processGRFs(time, forces, moments, system, inclination);
-            
-            % Construct overall GRF data array.
-            data = constructGRFDataArray(forces, cop, torques);
-            
-            % Create MOTData.
-            obj.Motion = createGRFData(time, data, input_file);
-            
-            % Motion-base transformation.
-            obj.Motion.rotate(0, inclination, 0);
-            
-            % If requested add assistive torques as external forces.
-            if narign == 4
-                obj.Motion = applyParameterisedAssistance(...
-                    obj.Motion, params);
+            if nargin > 0
+                % Read in the time, force and moment arrays.
+                [time, forces, moments, ~] = readViconForceData(input_file);
+
+                % Core GRF processing.
+                [time, forces, torques, cop] = ...
+                    processGRFs(time, forces, moments, system, inclination);
+
+                % Construct overall GRF data array.
+                data = constructGRFDataArray(forces, cop, torques);
+
+                % Create MOTData.
+                obj.Motion = createGRFData(time, data);
+
+                % Motion-base transformation.
+                obj.Motion.rotate(0, inclination, 0);
+
+                % If requested add assistive torques as external forces.
+                if nargin == 4
+                    obj.Motion = applyParameterisedAssistance(...
+                        obj.Motion, params);
+                end
+
+                % Store name of motion.
+                [~, obj.Name, ~] = fileparts(input_file);
             end
             
         end

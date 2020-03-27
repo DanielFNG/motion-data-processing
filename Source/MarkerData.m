@@ -5,19 +5,26 @@ classdef MarkerData < MotionData
        
         function obj = MarkerData(input_file, system, offset)
             
-            obj.Motion = produceMarkers(input_file, system, offset);
-            
-            % Load data.
-            obj.Motion = Data(input_file);
-            
-            % Convert units to 'm'.
-            obj.Motion.convertUnits('m');
-            
-            % Convert coordinates to OpenSim.
-            obj.Motion.convert(system);
-            
-            % Account for coordinate system offsets.
-            obj.Motion = applyOffsets(obj.Motion, offset);
+            if nargin > 0
+
+                % Load data.
+                obj.Motion = Data(input_file);
+
+                % Convert units to 'm'.
+                obj.Motion.convertUnits('m');
+
+                % Convert coordinates to OpenSim.
+                obj.Motion.convert(system);
+                
+                % Store name of motion.
+                [~, obj.Name, ~] = fileparts(input_file);
+
+                if nargin > 2
+                    % Account for coordinate system offsets.
+                    obj.Motion = applyOffsets(obj.Motion, offset);
+                end
+
+            end
             
         end
         

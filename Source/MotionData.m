@@ -5,22 +5,30 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
     % implementations are redefined in the appropriate subclasses.
     
     properties
+        Name
         Motion
-    end
-    
-    methods (Abstract)
-        
-        cycle_times = getSegmentationTimes(obj, parameter)
-        
     end
     
     methods (Abstract, Access = protected)
         
+        cycle_times = getSegmentationTimes(obj, parameter)
         compensateSpeed(obj, speed, direction)
         
     end
     
     methods
+        
+        function obj = MotionData(varargin)
+            
+            if nargin > 0
+                if nargin == 3 && isa(varargin{3}, 'OpenSimData')
+                    obj = feval(varargin{1});
+                    obj.Name = varargin{2};
+                    obj.Motion = varargin{3};
+                end
+            end
+            
+        end
        
         function synchronise(obj, another_obj, delay)
            
@@ -29,7 +37,10 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             
         end
         
-        function segment(obj, cycle_times, save_dir, save_folder)
+        function chunks = segment(obj, parameter)
+            
+            % Get times of segments.
+            cycle_times = obj.getSegmentationTimes(parameter);
             
             % Outlier removal.
             cycle_lengths = cellfun(@length, cycle_times);
@@ -42,13 +53,18 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             % Perform segmentation.
             n_cycles = length(cycle_times);
             digits = numel(num2str(n_cycles));
+            chunks = cell(1, n_cycles);
+            constructor = class(obj);
+            if isa(parameter, 'float')
+                parameter = num2str(parameter);
+            end
             for i = 1:n_cycles
-                savepath = [save_dir filesep save_folder filesep ...
-                    'cycle' sprintf(['%0' num2str(digits) 'i'], i)];
+                chunk_name = [obj.Name filesep parameter filesep 'cycle' ...
+                    sprintf(['%0' num2str(digits) 'i'], i)];
                 start = cycle_times{i}(1);
                 finish = cycle_times{i}(end);
-                piece = obj.Motion.slice(start, finish);
-                piece.writeToFile(savepath);
+                chunks{i} = MotionData(...
+                    constructor, chunk_name, obj.Motion.slice(start, finish));
             end
             
         end

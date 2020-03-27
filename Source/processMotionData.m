@@ -1,5 +1,5 @@
-function motions = writeMotionData(motions, motion_delays, speed, ...
-    speed_delay, seg_index, seg_params, save_dir, save_folders)
+function motions = processMotionData(motions, motion_delays, speed, ...
+    speed_delay, seg_index, seg_params)
     
     % Store the total number of input motions.
     n_motions = length(motions);
@@ -28,23 +28,15 @@ function motions = writeMotionData(motions, motion_delays, speed, ...
         if ~isa(seg_params, 'cell')
             seg_params = {seg_params};
         end
+        n_params = length(seg_params);
         
         % Perform all requested segmentations.
-        for param = seg_params
-            % Get cycle times.
-            cycle_times = motions{seg_index}.getSegmentationTimes(param);
-            
-            % Segment all motions.
-            for i = 1:n_motions
-                save_string = [param filesep save_folder(i)];
-                motions{i}.segment(cycle_times, save_dir, save_string);
-            end
-        end
-    else
-        % Produce files.
+        k = 1;
         for i = 1:n_motions
-            motions{i}.Motion.writeToFile([save_dir filesep ...
-                save_folders{i} filesep motions{i}.Motion.Name]);
+            for j = 1:n_params
+                motions{k} = motions{i}.segment(seg_params{j});
+                k = k + 1;
+            end
         end
     end
     
