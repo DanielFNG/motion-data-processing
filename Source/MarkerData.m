@@ -3,28 +3,49 @@ classdef MarkerData < MotionData
     
     methods
        
-        function obj = MarkerData(input_file, system, offset)
-            
+        function obj = MarkerData(varargin)
+        % MarkerData constructor.
+        %
+        %   obj = MarkerData(varargin)
+        %
+        %   If constructing from file, varargin is of length 3.
+        %   varargin{1} = input_file [path to input file]
+        %   varargin{2} = pos_offsets [vector of translational offsets in
+        %       origin of reference frame]
+        %   varargin{3} = rot_offsets [vector of rotational offsets in
+        %       origin of reference frame]
+        %
+        %   If constructing from an existing MotionData object, varargin is of 
+        %   length 2.
+        %   varargin{1} = marker_data [existing MarkerData object]
+        %   varargin{2} = name [the name associated to this object]
+        
+            super_args = {};
             if nargin > 0
+                if isa(varargin{1}, 'char')
+                    % Load data.
+                    motion_data = Data(varargin{1});
 
-                % Load data.
-                obj.Motion = Data(input_file);
+                    % Convert units to 'm'.
+                    motion_data.convertUnits('m');
 
-                % Convert units to 'm'.
-                obj.Motion.convertUnits('m');
+                    % Apply any transformations to the coordinate system.
+                    motion_data.translate(varargin{2});
+                    motion_data.rotate(varargin{3});
 
-                % Convert coordinates to OpenSim.
-                obj.Motion.convert(system);
-                
-                % Store name of motion.
-                [~, obj.Name, ~] = fileparts(input_file);
+                    % Store name of motion.
+                    [~, name, ~] = fileparts(varargin{1});
 
-                if nargin > 2
-                    % Account for coordinate system offsets.
-                    obj.Motion = applyOffsets(obj.Motion, offset);
+                    % Create superclass arguments
+                    super_args = {motion_data, name};
+                else
+                    % Superclass arguments already passed in
+                    super_args = varargin;
                 end
-
             end
+            
+            % Create object.
+            obj@MotionData(super_args{:});
             
         end
         

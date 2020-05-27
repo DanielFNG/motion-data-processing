@@ -9,7 +9,8 @@ classdef StaticData
         
         function obj = StaticData(input_file, system)
             
-            if isa(system, 'struct')
+            if nargin > 0
+                
                 % Load static data.
                 obj.Static = Data(input_file);
 
@@ -21,16 +22,14 @@ classdef StaticData
 
                 % Store name of static.
                 [~, obj.Name, ~] = fileparts(input_file);
-            else
-                obj.Name = input_file;
-                obj.Static = system;
+                
             end
             
         end
         
-        function write(save_dir)
+        function write(obj, save_dir)
             
-            static.Static.writeToFile([save_dir filesep obj.Name]);
+            obj.Static.writeToFile([save_dir filesep obj.Name]);
             
         end
         

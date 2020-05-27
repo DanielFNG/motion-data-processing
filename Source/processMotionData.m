@@ -1,5 +1,5 @@
-function motions = processMotionData(motions, motion_delays, speed, ...
-    speed_delay, seg_index, seg_params)
+function processed_motions = processMotionData(motions, sync_index, delays, ...
+    speed, speed_delay, seg_index, seg_params)
     
     % Store the total number of input motions.
     n_motions = length(motions);
@@ -8,10 +8,12 @@ function motions = processMotionData(motions, motion_delays, speed, ...
     end
     
     % Synchronise motions.
-    if n_motions > 1
-        for i = 2:n_motions
-            [motions{1}, motions{i}] = ...
-                motions{1}.synchronise(motions{i}, motion_delays(i - 1));
+    if n_motions > 1 && ~isempty(sync_index)
+        for i = 1:n_motions
+            if i ~= sync_index  % Don't sync to yourself
+                [motions{sync_index}, motions{i}] = motions{sync_index}. ...
+                    synchronise(motions{sync_index}, delays(i));
+            end
         end
     end
     
@@ -31,11 +33,11 @@ function motions = processMotionData(motions, motion_delays, speed, ...
         n_params = length(seg_params);
         
         % Perform all requested segmentations.
-        k = 1;
+        processed_motions = cell(n_params, n_motions);
         for i = 1:n_motions
-            for j = 1:n_params
-                motions{k} = motions{i}.segment(seg_params{j});
-                k = k + 1;
+            for j = 1:n_params  % Multiple sides at once
+                processed_motions{j, i} = ...
+                    motions{i}.segment(seg_params{j}, motions{seg_index});
             end
         end
     end

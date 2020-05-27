@@ -18,14 +18,11 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
     
     methods
         
-        function obj = MotionData(varargin)
+        function obj = MotionData(motion_data, name)
             
             if nargin > 0
-                if nargin == 3 && isa(varargin{3}, 'OpenSimData')
-                    obj = feval(varargin{1});
-                    obj.Name = varargin{2};
-                    obj.Motion = varargin{3};
-                end
+                obj.Name = name;
+                obj.Motion = motion_data;
             end
             
         end
@@ -37,10 +34,18 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             
         end
         
-        function chunks = segment(obj, parameter)
+        function chunks = segment(obj, side, another_obj)
             
-            % Get times of segments.
-            cycle_times = obj.getSegmentationTimes(parameter);
+            % Allow for segmentation using a second object
+            if nargin == 3
+                main = another_obj;
+            else
+                main = obj;
+            end
+            
+            % Get times of segments from the main object.
+            side = lower(side);
+            cycle_times = main.getSegmentationTimes(side);
             
             % Outlier removal.
             cycle_lengths = cellfun(@length, cycle_times);
@@ -55,16 +60,13 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             digits = numel(num2str(n_cycles));
             chunks = cell(1, n_cycles);
             constructor = class(obj);
-            if isa(parameter, 'float')
-                parameter = num2str(parameter);
-            end
             for i = 1:n_cycles
-                chunk_name = [obj.Name filesep parameter filesep 'cycle' ...
+                chunk_name = [obj.Name filesep side filesep 'cycle' ...
                     sprintf(['%0' num2str(digits) 'i'], i)];
                 start = cycle_times{i}(1);
                 finish = cycle_times{i}(end);
-                chunks{i} = MotionData(...
-                    constructor, chunk_name, obj.Motion.slice(start, finish));
+                chunks{i} = feval(constructor, ...
+                    obj.Motion.slice(start, finish), chunk_name);
             end
             
         end
@@ -81,6 +83,20 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             elseif speed ~= 0
                 obj.compensateSpeed(speed, 'x');
             end
+            
+        end
+        
+        function writeToFile(obj, save_dir)
+            
+            % Create save directory if it doesn't exist
+            save_path = [save_dir filesep obj.Name];
+            [path, ~, ~] = fileparts(save_path);
+            if ~exist(path, 'dir')
+                mkdir(path);
+            end
+            
+            % Write motion data
+            obj.Motion.writeToFile([save_dir filesep obj.Name]);
             
         end
         

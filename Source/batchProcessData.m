@@ -1,122 +1,133 @@
-function status = batchProcessData(settings)
+function status = batchProcessData(folder_paths, settings)
 
-    switch settings.analysis
-        case 'Static'
-            func = @processStaticData;
-            dirs = {settings.markers};
-            ext = '.trc';
-            args = {settings.marker_system};
-            folder_names = {settings.static_folder};
-        case 'Motion'
-            func = @processMotionData;
-            dirs = {settings.markers, settings.grfs};
-            args = {settings.marker_system, settings.grf_system, ...
-                settings.x_offset, settings.y_offset, settings.z_offset, ...
-                settings.time_delay, settings.speed, settings.inclination, ...
-                settings.assistance_params};
-            folder_names = {settings.marker_folder, settings.grf_folder};
-        case 'Marker'
-            func = @processMarkerData;
-            dirs = {settings.markers};
-            ext = '.trc';
-            args = {settings.marker_system, settings.speed};
-            folder_names = {settings.marker_folder};
-        case 'GRF'
-            func = @processGRFData;
-            dirs = {settings.grfs};
-            ext = '.txt';
-            args = {settings.grf_system, settings.speed, ...
-                settings.inclination, settings.assistance_params};
-            folder_names = {settings.grf_folder};
+    sources = fieldnames(folder_paths);
+    n_sources = length(sources);
+    
+    % Get paths to all files
+    n = zeros(1, n_sources);
+    for i = 1:n_sources
+        [n(i), file_paths.(sources{i})] = dirNoDots(folder_paths.(sources{i}));
     end
     
-    if isfield(settings, 'feet')
-        switch settings.analysis
-            case 'Motion'
-                args = [args {settings.feet}, settings.mode, folder_names];
-            otherwise
-                args = [args {settings.feet}, folder_names];
-        end
+    % Check we have the same number of files for each source
+    if n/n(1) ~= ones(1, n_sources)
+        error('Must have same number of files for each data source.');
     end
     
-    n_dirs = length(dirs);
-    switch n_dirs
-        case 1
-            [n_files, files] = getFilePaths(dirs{1}, ext);
-        case 2
-            [n_markers, markers] = getFilePaths(dirs{1}, '.trc');
-            [n_grfs, grfs] = getFilePaths(dirs{2}, '.txt');
-            if ~(n_markers == n_grfs)
-                error('Unequal number of markers and grf files.');
-            else
-                n_files = n_markers;
-            end
-            files = [markers; grfs];
+    % Get class and class arguments from settings info. Also create save
+    % directories for each source.
+    handles = cell(1, n_sources);
+    class_args = cell(1, n_sources);
+    save_dirs = cell(1, n_sources);
+    for i = 1:n_sources
+        handles{i} = getClassHandle(sources{i});
+        class_args{i} = getClassArguments(sources{i}, settings);
+        save_dirs{i} = [settings.SaveDirectory filesep sources{i}];
     end
     
-    % Reconstruct file list to take in to account the possibility of a
-    % subset of files being specified. Note that settings.FileSubset can
-    % be 1:n_files, in which case files is unchanged. 
-    if isfield(settings, 'subset')
-        file_list = settings.subset;
-        files = files(:, file_list);
-        n_files = size(files, 2);
-    end
-    
-    % Get the paths to the speed files if necessary. 
-    if isfield(settings, 'speed') && isa(settings.speed, 'char')
-        [~, speeds] = getFilePaths(settings.speed, '.txt');
-        speeds = speeds(file_list);
-    end
-    
-    % Create save directories.
-    paths = cell(n_dirs, n_files);
-    for i=1:n_dirs
-        if ~isfield(settings, 'feet')
-            paths(i, :) = {[settings.save_dir filesep folder_names{i}]};
-        else
-            for j=1:n_files
-                [~, name, ~] = fileparts(files{1, j});
-                paths(i, j) = ...
-                    {[settings.save_dir filesep name]};
-            end
-        end
-    end
+    % Get processing arguments
+    processing_args = getProcessingArguments(sources, settings);
     
     status = 0;
-    for i=1:n_files
+    for i = 1:n(1)
+        
+        % Create an array for the motions and save directories
+        motions = cell(1, n_sources);
+        
+        % For each motion...
+        for j = 1:n_sources
+        
+            % Add it to the motion array
+            motions{j} = ...
+                handles{j}(file_paths.(sources{j}){i}, class_args{j}{:});
+        
+        end
+        
         try
-            % Make the paths if they don't exist - but only if not using
-            % segment.
-            if ~isfield(settings, 'feet')
-                for j=1:n_dirs
-                    if ~exist(paths{j, i}, 'dir')
-                        mkdir(paths{j, i});
-                    end
-                end
-            end
-            
-            % If necessary find and replace the speeds argument.
-            if isfield(settings, 'speed') && isa(settings.speed, 'char')
-                args{strcmp(args, settings.speed)} = speeds{i};
-            end
-            
-            % Run the desired processing function. 
-            func(paths{:, i}, files{:, i}, args{:});
-            
-            % Re-set the speeds argument.
-            if isfield(settings, 'speed') && isa(settings.speed, 'char')
-                args{strcmp(args, speeds{i})} = settings.speed;
-            end
+            % Process the resulting motions
+            processed_motions = processMotionData(motions, processing_args{:});
+
+            % Write the processed motions
+            writeSegmentedMotions(processed_motions, save_dirs);
         catch err
             status = 1;
-            fprintf('Failed to process on entry %i.\n', i);
-            fprintf(err.message);
-            fprintf('\n');
+            fprintf('Failed to process on entry %i.\n%s\n', i, err.message);
             if settings.info
                 disp(getReport(err, 'extended', 'hyperlinks', 'on'));
             end
         end
+        
+    end
+ 
+    
+    function handle = getClassHandle(str)
+        
+        switch str
+            case 'Markers'
+                handle = @MarkerData;
+            case 'GRF'
+                handle = @GRFData;
+            case 'EMG'
+                handle = @EMGData;
+            case 'Calorimetry'
+                handle = @CalorimetryData;
+        end
+        
+    end
+    
+    function args = getClassArguments(str, settings)
+    
+        switch str
+            case 'Markers'
+                args = {settings.CoordinateTranslation, ...
+                    settings.CoordinateRotation};
+            case 'GRF'
+                args = {settings.GRFSystem, settings.Inclination};
+            case 'EMG'
+                args = {};
+            case 'Calorimetry'
+                % Not yet implemented
+        end
+    
+    end
+
+    function args = getProcessingArguments(sources, settings)
+        
+        args = {[], [], [], [], [], []};
+        
+        if isfield(settings, 'Baseline')
+            sync_index = find(strcmp(settings.Baseline, sources));
+            delays = zeros(1, length(sources));
+            for k = 1:length(sources)
+                delays(k) = settings.([sources{k} 'Delay']);
+            end
+            args{1} = sync_index;
+            args{2} = delays;
+        end
+        
+        if isfield(settings, 'Speed')
+            args{3} = settings.Speed;
+            args{4} = settings.GRFDelay;
+        end
+        
+        if isfield(settings, 'SegmentationMode')
+            switch settings.SegmentationMode
+                case 'Stance'
+                    source = 'GRF';
+                case 'Kinematics' 
+                    source = 'Markers';
+            end
+            seg_index = find(strcmp(source, sources));
+            if strcmp(settings.Feet, 'Both')
+                side = {'Left', 'Right'};
+            else
+                side = settings.Feet;
+            end
+            args{5} = seg_index;
+            args{6} = side;
+        end
+        
+        
     end
 
 end
