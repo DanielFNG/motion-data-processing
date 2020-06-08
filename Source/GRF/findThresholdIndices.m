@@ -1,6 +1,6 @@
 function [left, right] = findThresholdIndices(forces, upper, lower)
 % This function finds indices in filtered force data at which the vertical force 
-% is between an upper and lower bound. This complex implementation (compared to 
+% is between an upper and lower bound. This implementation (compared to 
 % find(fy < upper & fy < lower) for example) allows us to ignore any 
 % oscillations around FY = 0 in the data between gait cycles which commonly 
 % results from the filtering process. 

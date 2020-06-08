@@ -3,7 +3,7 @@ function [forces, moments] = compensateGravity(forces, moments, inclination)
 % inclination. Requires the gravity compensation matrix. 
 
     path = [getenv('MDP_HOME') filesep 'Source' filesep ...
-        'Motion Compensation' filesep 'UoE_GaitLab_GravityCompensation.mat'];
+        'GRF' filesep 'UoE_GaitLab_GravityCompensation.mat'];
     gcomp = getGravityCompensationMatrix(path, inclination);
     
     for i=1:3
