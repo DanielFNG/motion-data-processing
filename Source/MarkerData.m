@@ -123,7 +123,7 @@ classdef MarkerData < MotionData
             for i=1:obj.Motion.NCols
                 if strcmpi(obj.Motion.Labels{i}(end), direction)
                     initial_values = obj.Motion.getColumn(i);
-                    adjusted_values = accountForReferenceFrameMovement(...
+                    adjusted_values = obj.accountForReferenceFrameMovement(...
                         initial_values, time, speed);
                     obj.Motion.setColumn(i, adjusted_values);
                 end

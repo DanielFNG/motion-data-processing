@@ -71,15 +71,19 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             
         end
         
-        function compensateMotion(obj, speed, delay)
+        function compensateMotion(obj, speed, delay, name, threshold, filter)
             
             if isa(speed, 'char')
                 speed_data = Data(speed);
                 [~, speed_data] = obj.Motion.synchronise(...
                     speed_data, delay);
                 speed_data.spline(obj.Motion.Timesteps);
-                speed_data = calculateSpeedArray(speed_data, 1, 0.01);
-                obj.compensateSpeed(speed_data, 'x');
+                speed_data.filter4LP(filter);
+                speed_array = speed_data.getColumn(name);
+                if threshold 
+                    speed_array(speed_array < 0) = 0;
+                end
+                obj.compensateSpeed(speed_array, 'x');
             elseif speed ~= 0
                 obj.compensateSpeed(speed, 'x');
             end
@@ -102,5 +106,41 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
         
     end
     
+    methods (Static)
+        
+        function new_trajectory = accountForReferenceFrameMovement(...
+                trajectory, time, speed)
+        % Transform speed data to account for moving reference frame.
+        %
+        % Input:
+        %   trajectory - a trajectory in cartesian space (array size N)
+        %   time - the time at each point along the trajectory 
+        %   speed - the speed of the reference frame at each point
+        %
+        % Output:
+        %   new_trajectory - the trajectory from the point of view of a
+        %   static observer
+            
+            % Compute distance travelled between timesteps
+            dx = speed(1:end - 1) .* (time(2:end) - time(1:end - 1));
+            
+            % Initialise new trajectory
+            new_trajectory = trajectory;
+            
+            % Iteratively update the trajectory
+            for i = 2:length(new_trajectory)
+                new_trajectory(i) = new_trajectory(i - 1) - ...
+                    trajectory(i - 1) + + trajectory(i) + dx(i - 1);
+            end
+            
+        end
+        
+    end
+    
     
 end
+
+
+
+
+
