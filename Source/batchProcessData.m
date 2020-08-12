@@ -69,6 +69,8 @@ function status = batchProcessData(folder_paths, settings)
                 handle = @GRFData;
             case 'EMG'
                 handle = @EMGData;
+            case 'Calorimetry'
+                handle = @CalorimetryData;
         end
         
     end
@@ -83,6 +85,8 @@ function status = batchProcessData(folder_paths, settings)
                 args = {settings.GRFSystem, settings.Inclination};
             case 'EMG'
                 args = {};
+            case 'Calorimetry'
+                args = {settings.VO2Label, settings.RERLabel};
         end
     
     end

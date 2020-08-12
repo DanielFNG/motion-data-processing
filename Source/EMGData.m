@@ -13,7 +13,9 @@ classdef EMGData < MotionData
         %
         %   If constructing from an existing object, varargin is of length
         %   2.
-        %   varargin{1} = motion_data [existing concrete subclass of motion
+        %   varargin{1} = motion_data [existing concrete subclass of
+        %   motion]
+        %   varargin[2} = name [the name associated with this object, char]
             
             super_args = {};
             if nargin > 0
