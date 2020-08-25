@@ -3,7 +3,7 @@ function processed_motions = processMotionData(motions, sync_index, delays, ...
     
     % Store the total number of input motions.
     n_motions = length(motions);
-    if n_motions == 1
+    if n_motions == 1 && ~isa(motions, 'cell')
         motions = {motions};
     end
     
@@ -11,8 +11,7 @@ function processed_motions = processMotionData(motions, sync_index, delays, ...
     if n_motions > 1 && ~isempty(sync_index)
         for i = 1:n_motions
             if i ~= sync_index  % Don't sync to yourself
-                [motions{sync_index}, motions{i}] = motions{sync_index}. ...
-                    synchronise(motions{sync_index}, delays(i));
+                motions{sync_index}.synchronise(motions{sync_index}, delays(i));
             end
         end
     end
@@ -40,6 +39,8 @@ function processed_motions = processMotionData(motions, sync_index, delays, ...
                     motions{i}.segment(seg_params{j}, motions{seg_index});
             end
         end
+    else
+        processed_motions = motions;
     end
     
 end
