@@ -17,7 +17,7 @@ classdef MarkerData < MotionData
         %
         %   If constructing from an existing MotionData object, varargin is of 
         %   length 2.
-        %   varargin{1} = marker_data [existing MarkerData object]
+        %   varargin{1} = marker_data [existing OpenSimData object]
         %   varargin{2} = name [the name associated to this object]
         
             super_args = {};
@@ -124,7 +124,7 @@ classdef MarkerData < MotionData
                 if strcmpi(obj.Motion.Labels{i}(end), direction)
                     initial_values = obj.Motion.getColumn(i);
                     adjusted_values = obj.accountForReferenceFrameMovement(...
-                        initial_values, time, speed);
+                        initial_values, obj.Motion.Timesteps, speed);
                     obj.Motion.setColumn(i, adjusted_values);
                 end
             end
