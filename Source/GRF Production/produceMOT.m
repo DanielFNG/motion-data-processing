@@ -55,6 +55,6 @@ data = constructGRFDataArray(forces, cop, torques);
 grf_data = createGRFData(time, data);
 
 % Motion-base transformation.
-grf_data.rotate(0, inclination, 0);
+grf_data.rotate([0, inclination, 0]);
 
 end
