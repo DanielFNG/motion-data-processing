@@ -1,7 +1,7 @@
 function processMotionData(marker_save_dir, grf_save_dir, ...
     marker_file, grf_file, marker_system, grf_system, ...
     x_offset, y_offset, z_offset, time_delay, ...
-    speed, inclination, assistance_params, ...
+    speed, inclination, apo_file, ...
     feet, mode, marker_folder, grf_folder)
 
     % Produce data objects.
@@ -35,9 +35,23 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     end
     
     % Add assistive torques as external forces/moments.
-    if ~isempty(assistance_params)
-        [grfs, markers] = applyParameterisedAssistance(...
-            grfs, assistance_params, markers);
+    if ~isempty(apo_file)
+        % Read in the APO torques
+        apo_torques = parseEMGDataFaster(apo_file);
+        
+        % Filter using a 15Hz Butterworth filter
+        apo_torques.filter4LP(15);
+        
+        % Take a slice of the APO torques to match the processed grf data
+        grf_times = grfs.getTimesteps();
+        torques = apo_torques.slice(grf_times(1), grf_times(end));
+        
+        % Compute correct apo torques from voltages
+        right_torque = torques.getColumn('Right')*3 - 15;
+        left_torque = torques.getColumn('Left')*3 - 15;
+        
+        % Extend the GRF data with the correct APO torques
+        grfs = createAPOGRFs(grfs, left_torque, right_torque);
     end
     
     if nargin == 17
