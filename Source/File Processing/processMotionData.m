@@ -36,6 +36,9 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     
     % Add assistive torques as external forces/moments.
     if ~isempty(apo_file)
+%         % Old way - need for processing existing data
+%         [grfs, markers] = applyParameterisedAssistance(grfs, apo_file, markers);
+        
         % Read in the APO torques
         apo_torques = parseEMGDataFaster(apo_file);
         
