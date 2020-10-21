@@ -47,7 +47,15 @@ save_folders = {grf_save_folder kin_save_folder};
 % wrong belt for example. Note this is problematic if we ever look at
 % non-steady state walking - I'm going to make a note of this on GitHub. 
 cycle_lengths = cellfun(@length, segmentation_times);
-good_cycles = ~isoutlier(cycle_lengths);
+for i = 1:length(cycle_lengths)
+    if cycle_lengths(i) < 600 || cycle_lengths(i) > 1600
+        good_cycles(i) = 0;
+    else
+        good_cycles(i) = 1;
+    end
+end
+good_cycles = logical(good_cycles);
+%good_cycles = ~isoutlier(cycle_lengths);
 segmentation_times = segmentation_times(good_cycles);
 segmentation_frames = segmentation_frames(good_cycles);
 

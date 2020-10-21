@@ -50,8 +50,10 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
         torques = apo_torques.slice(grf_times(1), grf_times(end));
         
         % Compute correct apo torques from voltages
-        right_torque = torques.getColumn('Right')*3 - 15;
-        left_torque = torques.getColumn('Left')*3 - 15;
+%         right_torque = torques.getColumn('Right')*3 - 15;  % These were the old calculations
+%         left_torque = torques.getColumn('Left')*3 - 15;
+        right_torque = torques.getColumn('Right')*2.788 - 15;
+        left_torque = torques.getColumn('Left')*2.788 - 15;
         
         % Extend the GRF data with the correct APO torques
         grfs = createAPOGRFs(grfs, left_torque, right_torque);
