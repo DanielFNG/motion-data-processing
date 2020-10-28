@@ -7,10 +7,13 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     % Produce data objects.
     markers = Data(marker_file);
     markers.convert(marker_system);
+    markers.convertUnits('m');
     grfs = produceMOT(grf_file, grf_system, inclination);
     
-    % Convert marker units to 'm' if they're not in that form already.
-    markers.convertUnits('m');
+    % Producing the GRFs may have removed some data from the start or end
+    % which was unusable. Before synchronisation we need to slice the same
+    % amount of data from the marker files.
+    markers = markers.slice(grfs.Timesteps(1), grfs.Timesteps(end));
     
     % Synchronise. 
     [markers, grfs] = synchronise(markers, grfs, time_delay);
@@ -18,21 +21,21 @@ function processMotionData(marker_save_dir, grf_save_dir, ...
     % Coordinate system offset compensation.
     markers = applyOffsets(markers, x_offset, y_offset, z_offset);
     
-    % Speed compensation.
-    if isa(speed, 'char')
-        speed_data = Data(speed);
-        [~, marker_speed] = synchronise(markers, speed_data, time_delay);
-        grf_speed = copy(marker_speed);
-        marker_speed.spline(markers.getTimesteps());
-        grf_speed.spline(grfs.getTimesteps());
-        marker_speed = calculateSpeedArray(marker_speed, 1, 0.01);
-        grf_speed = calculateSpeedArray(grf_speed, 1, 0.01);
-        markers = compensateSpeedMarkers(markers, marker_speed, 'x');
-        grfs = compensateSpeedGRF(grfs, grf_speed, 'x');
-    elseif speed ~= 0
-        markers = compensateSpeedMarkers(markers, speed, 'x');
-        grfs = compensateSpeedGRF(grfs, speed, 'x');
-    end
+%     % Speed compensation.
+%     if isa(speed, 'char')
+%         speed_data = Data(speed);
+%         [~, marker_speed] = synchronise(markers, speed_data, time_delay);
+%         grf_speed = copy(marker_speed);
+%         marker_speed.spline(markers.getTimesteps());
+%         grf_speed.spline(grfs.getTimesteps());
+%         marker_speed = calculateSpeedArray(marker_speed, 1, 0.01);
+%         grf_speed = calculateSpeedArray(grf_speed, 1, 0.01);
+%         markers = compensateSpeedMarkers(markers, marker_speed, 'x');
+%         grfs = compensateSpeedGRF(grfs, grf_speed, 'x');
+%     elseif speed ~= 0
+%         markers = compensateSpeedMarkers(markers, speed, 'x');
+%         grfs = compensateSpeedGRF(grfs, speed, 'x');
+%     end
     
     % Add assistive torques as external forces/moments.
     if ~isempty(apo_file)
