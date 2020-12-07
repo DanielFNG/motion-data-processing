@@ -33,15 +33,21 @@ function [time, forces, torques, cop] = processGRFs(...
     cop = calculateCOP(forces, moments, left_indices, right_indices);
     cop_left = find(forces(:, 2) < trust);
     cop_right = find(forces(:, 5) < trust);
-    [cop, discard, from] = adjustCOP(...
+    [cop, discard_end, from, discard_start, to] = adjustCOP(...
         cop, left_indices, cop_left, right_indices, cop_right);
 
     % Discard unusable data if necessary.
-    if discard
+    if discard_end
         time(from:end) = [];
         forces(from:end, :) = [];
         moments(from:end, :) = [];
         cop(from:end, :) = [];
+    end
+    if discard_start
+        time(1:to) = [];
+        forces(1:to, :) = [];
+        moments(1:to, :) = [];
+        cop(1:to, :) = [];
     end
 
     % Calculate torques from free moments. 

@@ -34,26 +34,27 @@ classdef (Abstract) MotionData < handle & matlab.mixin.Copyable
             
         end
         
-        function chunks = segment(obj, side, another_obj)
+        function chunks = segment(obj, another_obj, side, cutoff)
             
-            % Allow for segmentation using a second object
-            if nargin == 3
-                main = another_obj;
-            else
-                main = obj;
+            % Allow for segmentation using a second object. Segmentation
+            % with respect to self is still possible: obj.segment(obj, ...)
+            main = another_obj;
+            
+            % Use 0.5 as the default cutoff
+            if nargin < 4
+                cutoff = 0.5;
             end
             
             % Get times of segments from the main object.
             side = lower(side);
             cycle_times = main.getSegmentationTimes(side);
             
-            % Outlier removal.
+            % Outlier removal. 
             cycle_lengths = cellfun(@length, cycle_times);
-            while any(isoutlier(cycle_lengths))
-                good_cycles = ~isoutlier(cycle_lengths);
-                cycle_times = cycle_times(good_cycles);
-                cycle_lengths = cycle_lengths(good_cycles);
-            end
+            avg_length = mean(cycle_lengths);
+            good_cycles = cycle_lengths > cutoff * avg_length & ...
+                cycle_lengths < (1 + cutoff) * avg_length;
+            cycle_times = cycle_times(good_cycles);
             
             % Perform segmentation.
             n_cycles = length(cycle_times);

@@ -1,4 +1,5 @@
-function [cop, discard, from] = adjustCOP(cop, grf_l, cop_l, grf_r, cop_r)
+function [cop, discard_end, from, discard_start, to] = adjustCOP(...
+    cop, grf_l, cop_l, grf_r, cop_r)
 % This function adjust CoP data collected at low force values due to the
 % inherent noise and inaccuracy of the signal in these conditions. 
 %
@@ -17,8 +18,10 @@ function [cop, discard, from] = adjustCOP(cop, grf_l, cop_l, grf_r, cop_r)
     full = 1:length(cop(:, 1));
     grfs = {grf_l, grf_r};
     cops = {cop_l, cop_r};
-    discard = false;
-    from = 0;
+    discard_end = false;
+    from = length(cop(:, 1));
+    discard_start = false;
+    to = 1;
     
     for side=1:2
         combined = setdiff(full, grfs{side});
@@ -39,8 +42,11 @@ function [cop, discard, from] = adjustCOP(cop, grf_l, cop_l, grf_r, cop_r)
                 combined_cycle = combined(jumps(cycle) + 1:jumps(cycle + 1));
                 trusted_cycle = intersect(combined_cycle, trust);
                 if cycle == length(jumps) - 1 && isempty(trusted_cycle)
-                    discard = true;
-                    from = max(from, combined_cycle(1));
+                    discard_end = true;
+                    from = min(from, combined_cycle(1));
+                elseif cycle == 1 && isempty(trusted_cycle)
+                    discard_start = true;
+                    to = max(to, combined_cycle(end));
                 else
                     cop(combined_cycle(1):trusted_cycle(1), d) = ...
                         cop(trusted_cycle(1), d);
