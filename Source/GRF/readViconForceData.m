@@ -24,7 +24,11 @@ function [time, forces, moments, cop] = readViconForceData(input_file)
     
     % Create the various arrays. 
     n_frames = size(values, 1);
-    time = 0.001*(0:n_frames - 1)';
+    frame_time = 0.01;
+    subframe_time = 0.001;
+    start_time = (values(1, 1) - 1) * frame_time; 
+    % The above ensures a start time of 0 at frame 1
+    time = subframe_time * (0:n_frames - 1)' + start_time;
     forces(:, 1:3) = values(:, 3:5);
     forces(:, 4:6) = values(:, 12:14);
     moments(:, 1:3) = values(:, 6:8);
