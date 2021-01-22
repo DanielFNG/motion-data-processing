@@ -15,4 +15,6 @@ function refiltered = processEMGSignal(wave)
     rectified = abs(filtered);
     refiltered = ZeroLagButtFiltfilt(...
         (1/frequency), lp_cutoff, order, 'lp', rectified);
+    refiltered(refiltered < 0) = 0;
+    
 end
