@@ -27,8 +27,16 @@ classdef StaticData
             
         end
         
-        function write(obj, save_dir)
+        function writeToFile(obj, save_dir)
             
+            % Create save directory if it doesn't exist
+            save_path = [save_dir filesep obj.Name];
+            [path, ~, ~] = fileparts(save_path);
+            if ~exist(path, 'dir')
+                mkdir(path);
+            end
+            
+            % Write motion data
             obj.Static.writeToFile([save_dir filesep obj.Name]);
             
         end
