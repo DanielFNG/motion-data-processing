@@ -36,7 +36,7 @@ function processed_motions = processMotionData(motions, sync_index, delays, ...
         for i = 1:n_motions
             for j = 1:n_params  % Multiple sides at once
                 processed_motions{j, i} = ...
-                    motions{i}.segment(seg_params{j}, motions{seg_index});
+                    motions{i}.segment(motions{seg_index}, seg_params{j});
             end
         end
     else
