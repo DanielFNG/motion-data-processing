@@ -38,6 +38,8 @@ cop_right = find(forces(:, 5) < trust);
     cop, left_indices, cop_left, right_indices, cop_right);
 
 % Discard unusable data if necessary.
+discard_start = false;
+discard_end = false;
 if discard_end
     time(from:end) = [];
     forces(from:end, :) = [];
